@@ -5,260 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Permissions-Policy" content="interest-cohort=(), attribution-reporting=(), run-ad-auction=(), join-ad-interest-group=(), browsing-topics=(), compute-pressure=()">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔒</text></svg>">
+    <link rel="stylesheet" href="style.css">
     <title>JavaScript Security Lab</title>
-    <style>
-        :root {
-            --primary-red: #ff3e3e;
-            --dark-bg: #1a1a1a;
-            --darker-bg: #0f0f0f;
-            --text-color: #e0e0e0;
-            --accent-color: #ff0000;
-            --cyber-blue: #00ff9d;
-        }
-
-        @keyframes glitch {
-            0% { text-shadow: 2px 0 var(--accent-color); }
-            25% { text-shadow: -2px 0 var(--cyber-blue); }
-            50% { text-shadow: 2px 0 var(--accent-color); }
-            75% { text-shadow: -2px 0 var(--cyber-blue); }
-            100% { text-shadow: 2px 0 var(--accent-color); }
-        }
-
-        @keyframes scanline {
-            0% { transform: translateY(-100%); }
-            100% { transform: translateY(100%); }
-        }
-
-        body {
-            font-family: 'Courier New', monospace;
-            margin: 0;
-            padding: 20px;
-            background-color: var(--dark-bg);
-            color: var(--text-color);
-            line-height: 1.6;
-            position: relative;
-            overflow-x: hidden;
-        }
-
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: repeating-linear-gradient(
-                0deg,
-                rgba(0, 0, 0, 0.1),
-                rgba(0, 0, 0, 0.1) 1px,
-                transparent 1px,
-                transparent 2px
-            );
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        body::after {
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(
-                transparent 50%,
-                rgba(255, 0, 0, 0.025) 50%
-            );
-            background-size: 100% 4px;
-            pointer-events: none;
-            animation: scanline 10s linear infinite;
-            z-index: 2;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: var(--darker-bg);
-            padding: 20px;
-            border-radius: 10px;
-            border: 1px solid var(--primary-red);
-            box-shadow: 0 0 20px rgba(255, 0, 0, 0.2);
-            position: relative;
-            z-index: 3;
-        }
-
-        h1 {
-            color: var(--primary-red);
-            text-align: center;
-            margin-bottom: 30px;
-            font-size: 2.5em;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            animation: glitch 2s infinite;
-        }
-
-        h2 {
-            color: var(--primary-red);
-            border-bottom: 2px solid var(--primary-red);
-            padding-bottom: 5px;
-            margin-top: 30px;
-        }
-
-        .section {
-            margin: 20px 0;
-            padding: 15px;
-            background: rgba(30, 30, 30, 0.9);
-            border-radius: 5px;
-            border: 1px solid var(--primary-red);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .section::before {
-            content: ">";
-            position: absolute;
-            left: 5px;
-            color: var(--primary-red);
-            font-weight: bold;
-        }
-
-        .output {
-            background: #000;
-            color: #0f0;
-            padding: 15px;
-            border-radius: 5px;
-            margin: 10px 0;
-            font-family: 'Courier New', monospace;
-            white-space: pre;
-            border: 1px solid var(--primary-red);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .output::before {
-            content: "OUTPUT_STREAM";
-            position: absolute;
-            top: 5px;
-            right: 10px;
-            color: var(--primary-red);
-            font-size: 0.8em;
-            opacity: 0.7;
-        }
-
-        .explanation {
-            background: rgba(255, 0, 0, 0.1);
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 5px;
-            border-left: 3px solid var(--primary-red);
-            font-size: 0.9em;
-        }
-
-        .tip {
-            color: var(--primary-red);
-            font-size: 0.9em;
-            margin-top: 15px;
-            padding: 10px;
-            border: 1px dashed var(--primary-red);
-            background: rgba(255, 0, 0, 0.05);
-        }
-
-        button {
-            background: var(--darker-bg);
-            color: var(--primary-red);
-            border: 2px solid var(--primary-red);
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            margin: 5px;
-            font-family: 'Courier New', monospace;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: all 0.3s ease;
-        }
-
-        button:hover {
-            background: var(--primary-red);
-            color: var(--darker-bg);
-            box-shadow: 0 0 10px var(--primary-red);
-        }
-
-        .controls {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .interactive-input {
-            background: var(--darker-bg);
-            border: 1px solid var(--primary-red);
-            color: var(--text-color);
-            padding: 8px;
-            margin: 5px;
-            border-radius: 4px;
-            font-family: 'Courier New', monospace;
-        }
-
-        .input-group {
-            margin: 10px 0;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .input-group label {
-            min-width: 120px;
-        }
-
-        .result {
-            background: rgba(255, 0, 0, 0.1);
-            padding: 10px;
-            margin-top: 10px;
-            border-radius: 4px;
-            border-left: 3px solid var(--primary-red);
-        }
-
-        .type-badge {
-            display: inline-block;
-            padding: 2px 6px;
-            background: var(--primary-red);
-            color: white;
-            border-radius: 3px;
-            font-size: 0.8em;
-            margin-left: 5px;
-        }
-
-        .operation-select {
-            background: var(--darker-bg);
-            color: var(--text-color);
-            border: 1px solid var(--primary-red);
-            padding: 8px;
-            border-radius: 4px;
-            font-family: 'Courier New', monospace;
-        }
-
-        .operation-select option {
-            background: var(--darker-bg);
-            color: var(--text-color);
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                margin: 10px;
-                padding: 15px;
-            }
-            
-            h1 {
-                font-size: 1.8em;
-            }
-        }
-    </style>
 </head>
 <body>
     <div class="container">
         <h1>JavaScript Security Lab</h1>
         
-        <div class="section">
+        <div class="section" data-tooltip="Explore JavaScript data types">
             <h2>Part 1: Data Type Analysis</h2>
             <div class="explanation">
                 Test different data types in JavaScript:
@@ -284,7 +38,7 @@
             <div id="typeResults" class="result"></div>
         </div>
 
-        <div class="section">
+        <div class="section" data-tooltip="Try arithmetic operations">
             <h2>Part 2: Calculator Operations</h2>
             <div class="explanation">
                 Try different arithmetic operations:
@@ -309,7 +63,7 @@
             <div id="calcResult" class="result"></div>
         </div>
 
-        <div class="section">
+        <div class="section" data-tooltip="Test comparison operators">
             <h2>Part 3: Operator Testing</h2>
             <div class="explanation">
                 Explore different operators:
@@ -326,8 +80,8 @@
         </div>
 
         <div class="controls">
-            <button onclick="updateAllResults()">Run Tests</button>
-            <button onclick="clearAllResults()">Clear Results</button>
+            <button onclick="updateAllResults()" data-tooltip="Ctrl + Enter">Run Tests</button>
+            <button onclick="clearAllResults()" data-tooltip="Ctrl + Delete">Clear Results</button>
         </div>
     </div>
     <script src="script.js"></script>
