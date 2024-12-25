@@ -3,52 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JavaScript Hacker Lab</title>
+    <title>JavaScript Learning Lab</title>
     <style>
+        :root {
+            --primary-color: #1a1a1a;
+            --secondary-color: #2d2d2d;
+            --accent-color: #007acc;
+            --text-color: #ffffff;
+            --text-secondary: #b3b3b3;
+        }
+        
         body {
-            font-family: 'Courier New', monospace;
-            margin: 20px;
-            background-color: #1a0000;
-            color: #ff0000;
-        }
-        .section {
-            background-color: #2b0000;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            margin: 0;
             padding: 20px;
-            margin-bottom: 20px;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(255,0,0,0.3);
-            border: 1px solid #ff3333;
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            line-height: 1.6;
         }
-        h1, h2 {
-            color: #ff3333;
-            text-shadow: 0 0 5px #ff0000;
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
         }
-        .instruction {
-            color: #ff6666;
-            margin-bottom: 10px;
-        }
-        /* Matrix-like animation */
-        @keyframes flicker {
-            0% { opacity: 0.8; }
-            50% { opacity: 1; }
-            100% { opacity: 0.8; }
-        }
+
         .section {
-            animation: flicker 2s infinite;
+            background-color: var(--secondary-color);
+            padding: 25px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid var(--accent-color);
+        }
+
+        h1, h2 {
+            color: var(--text-color);
+            margin-top: 0;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            font-size: 1.8em;
+            color: var(--accent-color);
+        }
+
+        .instruction {
+            color: var(--text-secondary);
+            margin: 15px 0;
+            font-size: 1.1em;
+        }
+
+        .console-hint {
+            background-color: rgba(0, 122, 204, 0.1);
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 15px;
+        }
+
+        code {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Consolas', monospace;
         }
     </style>
 </head>
 <body>
-    <h1>JavaScript Hacker Lab: Data Types and Operators</h1>
-    
-    <div class="section">
-        <h2>Part 1: Understanding Data Types</h2>
-        <div class="instruction">> Open the browser console (F12) to see the output</div>
-    </div>
+    <div class="container">
+        <h1>JavaScript Learning Lab</h1>
+        
+        <div class="section">
+            <h2>Part 1: Understanding Data Types</h2>
+            <div class="instruction">Explore JavaScript's fundamental data types through interactive examples.</div>
+            <div class="console-hint">
+                Press <code>F12</code> or <code>Ctrl+Shift+J</code> to open the console and see the output
+            </div>
+        </div>
 
-    <div class="section">
-        <h2>Part 2: Exploring JavaScript Operators</h2>
-        <div class="instruction">> Check the console for results of arithmetic operations</div>
+        <div class="section">
+            <h2>Part 2: Exploring JavaScript Operators</h2>
+            <div class="instruction">Learn about arithmetic, comparison, and logical operators with hands-on examples.</div>
+            <div class="console-hint">
+                Check the console to see the results of various operations
+            </div>
+        </div>
     </div>
 
     <script src="script.js"></script>

@@ -1,65 +1,86 @@
+// Utility function for better console output
+function printSection(title) {
+    console.log('\n%c' + title, 'color: #007acc; font-size: 14px; font-weight: bold; padding: 5px 0;');
+    console.log('='.repeat(50));
+}
+
+function printSubSection(title) {
+    console.log('\n%c' + title, 'color: #4CAF50; font-size: 12px; font-weight: bold;');
+}
+
 // Part 1: Understanding Data Types
-console.log("Part 1: Understanding Data Types in JavaScript");
-console.log("-----------------------------------------");
+printSection('Part 1: Understanding Data Types in JavaScript');
 
 // Task 1: Declare variables to represent student information
-let studentName;    // String type for storing name
-let studentAge;     // Number type for storing age
-let studentGrade;   // Number type for storing grade
-let isPresent;      // Boolean type for storing attendance status
+let studentName;    // String type
+let studentAge;     // Number type
+let studentGrade;   // Number type
+let isPresent;      // Boolean type
 
-// Task 2: Assign sample values to the student information variables
-studentName = "Alice";
+// Task 2: Assign sample values
+studentName = "Alice Johnson";
 studentAge = 15;
 studentGrade = 10;
 isPresent = true;
 
-// Task 3: Display the student information
-console.log("Student Information:");
-console.log("Name:", studentName);
-console.log("Age:", studentAge);
-console.log("Grade:", studentGrade);
-console.log("Is Present:", isPresent);
-console.log("\n"); // Add a blank line for readability
+// Task 3: Display student information
+printSubSection('Student Information');
+console.log({
+    Name: studentName,
+    Age: studentAge,
+    Grade: studentGrade,
+    'Attendance Status': isPresent
+});
 
 // Part 2: Exploring JavaScript Operators
-console.log("Part 2: Exploring JavaScript Operators");
-console.log("-----------------------------------------");
+printSection('Part 2: Exploring JavaScript Operators');
 
-// Task 1 & 2: Declare and assign values to numeric variables
+// Task 1 & 2: Declare and assign values
 let num1 = 20;
 let num2 = 5;
-console.log("Initial Values:");
-console.log("num1 =", num1);
-console.log("num2 =", num2);
-console.log("\n");
 
-// Task 3: Perform arithmetic operations
-console.log("Arithmetic Operations:");
-console.log("Sum:", num1 + num2);
-console.log("Difference:", num1 - num2);
-console.log("Product:", num1 * num2);
-console.log("Quotient:", num1 / num2);
-console.log("\n");
+printSubSection('Initial Values');
+console.log({
+    'Number 1': num1,
+    'Number 2': num2
+});
 
-// Task 4: Explore assignment operators
-console.log("Assignment Operators:");
+// Task 3: Arithmetic Operations
+printSubSection('Arithmetic Operations');
+console.log({
+    'Addition (num1 + num2)': num1 + num2,
+    'Subtraction (num1 - num2)': num1 - num2,
+    'Multiplication (num1 * num2)': num1 * num2,
+    'Division (num1 / num2)': num1 / num2,
+    'Modulus (num1 % num2)': num1 % num2
+});
+
+// Task 4: Assignment Operators
+printSubSection('Assignment Operators');
 num1 += 5;  // Add 5 to num1
 num2 *= 2;  // Multiply num2 by 2
-console.log("Updated num1:", num1);
-console.log("Updated num2:", num2);
-console.log("\n");
+console.log({
+    'num1 after adding 5': num1,
+    'num2 after multiplying by 2': num2
+});
 
-// Task 5: Use comparison operators
-console.log("Comparison Operators:");
-console.log("Is num1 equal to num2?", num1 === num2);
-console.log("Is num1 greater than num2?", num1 > num2);
-console.log("Is num1 not equal to num2?", num1 !== num2);
-console.log("\n");
+// Task 5: Comparison Operators
+printSubSection('Comparison Operators');
+console.log({
+    'Equal to (num1 === num2)': num1 === num2,
+    'Greater than (num1 > num2)': num1 > num2,
+    'Less than (num1 < num2)': num1 < num2,
+    'Not equal to (num1 !== num2)': num1 !== num2,
+    'Greater than or equal to (num1 >= num2)': num1 >= num2,
+    'Less than or equal to (num1 <= num2)': num1 <= num2
+});
 
-// Task 6: Apply logical operators
-console.log("Logical Operators:");
+// Task 6: Logical Operators
+printSubSection('Logical Operators');
 let isPositive = num1 > 0 && num2 > 0;
 let isEven = num1 % 2 === 0 || num2 % 2 === 0;
-console.log("Are both numbers positive?", isPositive);
-console.log("Is at least one number even?", isEven);
+console.log({
+    'Both numbers are positive (AND)': isPositive,
+    'At least one number is even (OR)': isEven,
+    'num1 is NOT zero': !num1
+});
