@@ -31,24 +31,46 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Initialize Terminal
-    term = new Terminal({
-        cursorBlink: true,
-        cursorStyle: 'block',
-        fontSize: 14,
-        fontFamily: 'monospace',
-        theme: {
-            background: '#1a1a1a',
-            foreground: '#00ff00'
-        }
-    });
-    
     const terminalContainer = document.getElementById('terminal');
     if (terminalContainer) {
-        term.open(terminalContainer);
-        const fitAddon = new FitAddon.FitAddon();
-        term.loadAddon(fitAddon);
-        fitAddon.fit();
-        term.write('JavaScript Security Lab Terminal\r\n$ ');
+        term = new Terminal({
+            cursorBlink: true,
+            cursorStyle: 'block',
+            fontSize: 14,
+            fontFamily: 'monospace',
+            theme: {
+                background: '#1a1a1a',
+                foreground: '#00ff00',
+                cursor: '#00ff00',
+                selection: 'rgba(0, 255, 0, 0.3)',
+                black: '#000000',
+                red: '#ff0000',
+                green: '#33ff00',
+                yellow: '#ffff00',
+                blue: '#0066ff',
+                magenta: '#cc00ff',
+                cyan: '#00ffff',
+                white: '#d0d0d0',
+                brightBlack: '#808080',
+                brightRed: '#ff0000',
+                brightGreen: '#33ff00',
+                brightYellow: '#ffff00',
+                brightBlue: '#0066ff',
+                brightMagenta: '#cc00ff',
+                brightCyan: '#00ffff',
+                brightWhite: '#ffffff'
+            }
+        });
+
+        try {
+            term.open(terminalContainer);
+            const fitAddon = new FitAddon.FitAddon();
+            term.loadAddon(fitAddon);
+            fitAddon.fit();
+            term.write('JavaScript Security Lab Terminal\r\n$ ');
+        } catch (error) {
+            console.error('Terminal initialization error:', error);
+        }
     }
 
     // Button Event Listeners
