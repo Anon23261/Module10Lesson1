@@ -1,10 +1,14 @@
 // Global variables
 let editor;
+let term;
 
 // Initialize CodeMirror and setup IDE
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize CodeMirror
-    editor = CodeMirror.fromTextArea(document.getElementById('codeEditor'), {
+    const codeEditor = document.getElementById('codeEditor');
+    if (!codeEditor) return;
+
+    editor = CodeMirror.fromTextArea(codeEditor, {
         mode: 'javascript',
         theme: 'monokai',
         lineNumbers: true,
@@ -27,7 +31,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Initialize Terminal
-    const term = new Terminal({
+    term = new Terminal({
         cursorBlink: true,
         cursorStyle: 'block',
         fontSize: 14,
@@ -48,6 +52,18 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Button Event Listeners
+    setupEventListeners();
+
+    // Initialize Matrix Background Effect
+    createMatrixRain();
+
+    // Initial setup
+    editor.refresh();
+    editor.focus();
+});
+
+// Setup Event Listeners
+function setupEventListeners() {
     const runButton = document.getElementById('runButton');
     if (runButton) {
         runButton.addEventListener('click', runCode);
@@ -56,8 +72,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const clearButton = document.getElementById('clearButton');
     if (clearButton) {
         clearButton.addEventListener('click', () => {
-            editor.setValue('');
-            clearOutput();
+            if (editor) {
+                editor.setValue('');
+                clearOutput();
+            }
         });
     }
 
@@ -88,30 +106,25 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Status Bar Updates
-    editor.on('cursorActivity', updateCursorPosition);
-    editor.on('change', updateFileSize);
+    if (editor) {
+        editor.on('cursorActivity', updateCursorPosition);
+        editor.on('change', updateFileSize);
+    }
 
     // Theme Selector
     const themeSelect = document.getElementById('syntaxTheme');
     if (themeSelect) {
         themeSelect.addEventListener('change', (e) => {
-            editor.setOption('theme', e.target.value);
+            if (editor) {
+                editor.setOption('theme', e.target.value);
+            }
         });
     }
-
-    // Matrix Background Effect
-    createMatrixRain();
-
-    // Initial setup
-    editor.refresh();
-    editor.focus();
-});
+}
 
 // Matrix Rain Effect
 function createMatrixRain() {
     const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d', { willReadFrequently: true });
-    document.body.appendChild(canvas);
     canvas.style.position = 'fixed';
     canvas.style.top = '0';
     canvas.style.left = '0';
@@ -119,6 +132,10 @@ function createMatrixRain() {
     canvas.style.height = '100%';
     canvas.style.zIndex = '-1';
     canvas.style.opacity = '0.1';
+    document.body.appendChild(canvas);
+
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    if (!ctx) return;
 
     let matrixChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%';
     let drops = [];
@@ -135,6 +152,7 @@ function createMatrixRain() {
     }
 
     function drawMatrix() {
+        if (!ctx) return;
         ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = '#0F0';
@@ -157,6 +175,7 @@ function createMatrixRain() {
 
 // IDE Functions
 function runCode() {
+    if (!editor) return;
     const code = editor.getValue();
     const startTime = performance.now();
     
@@ -189,6 +208,7 @@ function runCode() {
 }
 
 function formatCode() {
+    if (!editor) return;
     try {
         const code = editor.getValue();
         const formatted = prettier.format(code, {
@@ -206,6 +226,7 @@ function formatCode() {
 }
 
 function copyToClipboard() {
+    if (!editor) return;
     const code = editor.getValue();
     navigator.clipboard.writeText(code)
         .then(() => console.info('Code copied to clipboard!'))
@@ -244,6 +265,7 @@ function updateExecutionTime(time) {
 }
 
 function updateCursorPosition() {
+    if (!editor) return;
     const pos = editor.getCursor();
     const cursorPosition = document.getElementById('cursorPosition');
     if (cursorPosition) {
@@ -252,6 +274,7 @@ function updateCursorPosition() {
 }
 
 function updateFileSize() {
+    if (!editor) return;
     const size = new Blob([editor.getValue()]).size;
     const fileSize = document.getElementById('fileSize');
     if (fileSize) {
