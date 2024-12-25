@@ -262,6 +262,28 @@
             
             <div class="example-box">
                 <div class="input-group">
+                    <label for="boolValue1">> Boolean Value 1:</label>
+                    <select id="boolValue1">
+                        <option value="true">TRUE</option>
+                        <option value="false">FALSE</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="boolValue2">> Boolean Value 2:</label>
+                    <select id="boolValue2">
+                        <option value="true">TRUE</option>
+                        <option value="false">FALSE</option>
+                    </select>
+                </div>
+
+                <button onclick="evaluateBoolean()">Evaluate Boolean Operations</button>
+
+                <div class="result" id="booleanResults">
+                    <!-- Boolean results will appear here -->
+                </div>
+
+                <div class="input-group">
                     <label for="hackingCode">> Input Encryption Code:</label>
                     <textarea id="hackingCode" placeholder="Enter your JavaScript code here...">// Example:
 for(let i = 0; i < 5; i++) {

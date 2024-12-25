@@ -94,6 +94,44 @@ function checkLogical() {
     console.log('Logical Protocols Executed:', results);
 }
 
+function evaluateBoolean() {
+    const bool1 = document.getElementById('boolValue1').value === 'true';
+    const bool2 = document.getElementById('boolValue2').value === 'true';
+
+    const results = {
+        'AND (&&)': `${bool1} && ${bool2} = ${bool1 && bool2}`,
+        'OR (||)': `${bool1} || ${bool2} = ${bool1 || bool2}`,
+        'NOT (!), Value 1': `!${bool1} = ${!bool1}`,
+        'NOT (!), Value 2': `!${bool2} = ${!bool2}`,
+        'NAND !(&&)': `!(${bool1} && ${bool2}) = ${!(bool1 && bool2)}`,
+        'NOR !(||)': `!(${bool1} || ${bool2}) = ${!(bool1 || bool2)}`,
+        'XOR (!=)': `${bool1} != ${bool2} = ${bool1 !== bool2}`,
+        'XNOR (==)': `${bool1} == ${bool2} = ${bool1 === bool2}`
+    };
+
+    const output = Object.entries(results)
+        .map(([operation, result]) => 
+            `<div><span class="result-label">> ${operation}:</span> <span class="matrix-text">${result}</span></div>`)
+        .join('');
+
+    document.getElementById('booleanResults').innerHTML = output;
+    hackLog('Boolean operations evaluated');
+    
+    // Create truth table
+    hackLog('Generating truth table...');
+    const truthTable = [
+        ['A', 'B', 'AND', 'OR', 'XOR'],
+        ['0', '0', '0', '0', '0'],
+        ['0', '1', '0', '1', '1'],
+        ['1', '0', '0', '1', '1'],
+        ['1', '1', '1', '1', '0']
+    ];
+
+    truthTable.forEach(row => {
+        hackLog(row.join(' | '));
+    });
+}
+
 // Part 3: Advanced Hacking Protocols
 function executeCode() {
     const code = document.getElementById('hackingCode').value;
@@ -151,5 +189,6 @@ document.addEventListener('DOMContentLoaded', () => {
     calculateArithmetic();
     compareNumbers();
     checkLogical();
+    evaluateBoolean();
     hackLog('System initialization complete');
 });
