@@ -3,24 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JavaScript Learning Lab</title>
+    <title>JavaScript Hacker Lab</title>
     <style>
         :root {
-            --primary-color: #1a1a1a;
-            --secondary-color: #2d2d2d;
-            --accent-color: #007acc;
+            --primary-color: #0a0a0a;
+            --secondary-color: #1a0000;
+            --accent-color: #ff0000;
             --text-color: #ffffff;
-            --text-secondary: #b3b3b3;
-            --success-color: #4CAF50;
+            --text-secondary: #ff3333;
+            --success-color: #00ff00;
+            --matrix-green: #00ff00;
         }
         
         body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-family: 'Courier New', monospace;
             margin: 0;
             padding: 20px;
             background-color: var(--primary-color);
             color: var(--text-color);
             line-height: 1.6;
+        }
+
+        @keyframes glitch {
+            0% { text-shadow: 2px 0 var(--accent-color); }
+            25% { text-shadow: -2px 0 var(--matrix-green); }
+            50% { text-shadow: 2px 0 var(--accent-color); }
+            75% { text-shadow: -2px 0 var(--matrix-green); }
+            100% { text-shadow: 2px 0 var(--accent-color); }
         }
 
         .container {
@@ -34,13 +43,32 @@
             padding: 25px;
             margin-bottom: 20px;
             border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            border-left: 4px solid var(--accent-color);
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.2);
+            border: 1px solid var(--accent-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--accent-color);
+            animation: scan 2s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(1000%); }
         }
 
         h1, h2 {
-            color: var(--text-color);
+            color: var(--accent-color);
             margin-top: 0;
+            animation: glitch 3s infinite;
         }
 
         h1 {
@@ -48,11 +76,11 @@
             margin-bottom: 30px;
             border-bottom: 2px solid var(--accent-color);
             padding-bottom: 10px;
+            text-transform: uppercase;
         }
 
         h2 {
             font-size: 1.8em;
-            color: var(--accent-color);
         }
 
         .instruction {
@@ -62,10 +90,11 @@
         }
 
         .example-box {
-            background-color: rgba(0, 122, 204, 0.1);
+            background-color: rgba(255, 0, 0, 0.1);
             padding: 20px;
             border-radius: 4px;
             margin: 15px 0;
+            border: 1px solid rgba(255, 0, 0, 0.3);
         }
 
         .input-group {
@@ -78,7 +107,7 @@
             color: var(--text-secondary);
         }
 
-        input, select {
+        input, select, textarea {
             background-color: var(--primary-color);
             border: 1px solid var(--accent-color);
             color: var(--text-color);
@@ -86,6 +115,13 @@
             border-radius: 4px;
             font-size: 1em;
             width: 200px;
+            font-family: 'Courier New', monospace;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100px;
+            resize: vertical;
         }
 
         button {
@@ -97,10 +133,14 @@
             cursor: pointer;
             font-size: 1em;
             margin: 5px;
+            font-family: 'Courier New', monospace;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
         }
 
         button:hover {
-            background-color: #005999;
+            background-color: #cc0000;
+            box-shadow: 0 0 10px var(--accent-color);
         }
 
         .result {
@@ -127,76 +167,120 @@
         .output {
             color: var(--success-color);
         }
+
+        .matrix-text {
+            color: var(--matrix-green);
+        }
+
+        #hackingOutput {
+            font-family: 'Courier New', monospace;
+            color: var(--matrix-green);
+            background-color: var(--primary-color);
+            padding: 15px;
+            border: 1px solid var(--accent-color);
+            height: 150px;
+            overflow-y: auto;
+            margin-top: 15px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>JavaScript Learning Lab</h1>
+        <h1>JavaScript Hacker Lab</h1>
         
         <div class="section">
             <h2>Part 1: Understanding Data Types</h2>
-            <div class="instruction">Explore different data types in JavaScript through this interactive example.</div>
+            <div class="instruction">> Initialize target parameters...</div>
             
             <div class="example-box">
                 <div class="input-group">
-                    <label for="studentName">Student Name (String):</label>
-                    <input type="text" id="studentName" value="Alice Johnson">
+                    <label for="studentName">> Agent Name (String):</label>
+                    <input type="text" id="studentName" value="Agent Smith">
                 </div>
                 
                 <div class="input-group">
-                    <label for="studentAge">Student Age (Number):</label>
-                    <input type="number" id="studentAge" value="15">
+                    <label for="studentAge">> Agent Age (Number):</label>
+                    <input type="number" id="studentAge" value="27">
                 </div>
                 
                 <div class="input-group">
-                    <label for="studentGrade">Grade Level (Number):</label>
-                    <input type="number" id="studentGrade" value="10">
+                    <label for="studentGrade">> Clearance Level (Number):</label>
+                    <input type="number" id="studentGrade" value="5">
                 </div>
                 
                 <div class="input-group">
-                    <label for="isPresent">Attendance Status (Boolean):</label>
+                    <label for="isPresent">> Active Status (Boolean):</label>
                     <select id="isPresent">
-                        <option value="true">Present</option>
-                        <option value="false">Absent</option>
+                        <option value="true">ACTIVE</option>
+                        <option value="false">INACTIVE</option>
                     </select>
                 </div>
 
-                <button onclick="updateStudentInfo()">Update Student Information</button>
+                <button onclick="updateStudentInfo()">Initialize Agent Profile</button>
                 
                 <div class="result" id="studentResult">
-                    <div><span class="result-label">Name:</span> <span id="nameOutput"></span></div>
-                    <div><span class="result-label">Age:</span> <span id="ageOutput"></span></div>
-                    <div><span class="result-label">Grade:</span> <span id="gradeOutput"></span></div>
-                    <div><span class="result-label">Present:</span> <span id="presentOutput"></span></div>
+                    <div><span class="result-label">> Name:</span> <span id="nameOutput"></span></div>
+                    <div><span class="result-label">> Age:</span> <span id="ageOutput"></span></div>
+                    <div><span class="result-label">> Level:</span> <span id="gradeOutput"></span></div>
+                    <div><span class="result-label">> Status:</span> <span id="presentOutput"></span></div>
                 </div>
             </div>
         </div>
 
         <div class="section">
             <h2>Part 2: Exploring JavaScript Operators</h2>
-            <div class="instruction">Try out different operators with these interactive calculators.</div>
+            <div class="instruction">> Execute calculation protocols...</div>
             
             <div class="example-box">
                 <div class="calculator">
                     <div class="input-group">
-                        <label for="num1">Number 1:</label>
+                        <label for="num1">> Primary Value:</label>
                         <input type="number" id="num1" value="20">
                     </div>
                     
                     <div class="input-group">
-                        <label for="num2">Number 2:</label>
+                        <label for="num2">> Secondary Value:</label>
                         <input type="number" id="num2" value="5">
                     </div>
                 </div>
 
-                <button onclick="calculateArithmetic()">Calculate Arithmetic Operations</button>
-                <button onclick="compareNumbers()">Compare Numbers</button>
-                <button onclick="checkLogical()">Check Logical Operations</button>
+                <button onclick="calculateArithmetic()">Execute Arithmetic</button>
+                <button onclick="compareNumbers()">Run Comparisons</button>
+                <button onclick="checkLogical()">Verify Logic</button>
                 
                 <div class="result" id="operatorResults">
                     <div id="arithmeticOutput"></div>
                     <div id="comparisonOutput"></div>
                     <div id="logicalOutput"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Part 3: Advanced Hacking Protocols</h2>
+            <div class="instruction">> Initialize advanced operations...</div>
+            
+            <div class="example-box">
+                <div class="input-group">
+                    <label for="hackingCode">> Input Encryption Code:</label>
+                    <textarea id="hackingCode" placeholder="Enter your JavaScript code here...">// Example:
+for(let i = 0; i < 5; i++) {
+    console.log('Executing protocol ' + i);
+}</textarea>
+                </div>
+
+                <div class="input-group">
+                    <label for="encryptionKey">> Encryption Key:</label>
+                    <input type="text" id="encryptionKey" placeholder="Enter key...">
+                </div>
+
+                <button onclick="executeCode()">Execute Protocol</button>
+                <button onclick="encryptMessage()">Encrypt Message</button>
+                <button onclick="generateMatrix()">Generate Matrix</button>
+
+                <div id="hackingOutput">
+                    > System initialized...
+                    > Awaiting input...
                 </div>
             </div>
         </div>

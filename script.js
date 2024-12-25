@@ -1,33 +1,31 @@
-// Utility function for better console output
-function printSection(title) {
-    console.log('\n%c' + title, 'color: #007acc; font-size: 14px; font-weight: bold; padding: 5px 0;');
-    console.log('='.repeat(50));
-}
-
-function printSubSection(title) {
-    console.log('\n%c' + title, 'color: #4CAF50; font-size: 12px; font-weight: bold;');
+// Utility function for hacker-style console output
+function hackLog(message, type = 'info') {
+    const output = document.getElementById('hackingOutput');
+    const timestamp = new Date().toLocaleTimeString();
+    const prefix = type === 'error' ? '> ERROR:' : '>';
+    const color = type === 'error' ? 'red' : '#00ff00';
+    
+    output.innerHTML += `<div style="color: ${color}">${prefix} [${timestamp}] ${message}</div>`;
+    output.scrollTop = output.scrollHeight;
 }
 
 // Part 1: Understanding Data Types
 function updateStudentInfo() {
-    // Get input values
     const studentName = document.getElementById('studentName').value;
     const studentAge = parseInt(document.getElementById('studentAge').value);
     const studentGrade = parseInt(document.getElementById('studentGrade').value);
     const isPresent = document.getElementById('isPresent').value === 'true';
 
-    // Update output elements
     document.getElementById('nameOutput').textContent = studentName;
     document.getElementById('ageOutput').textContent = studentAge;
     document.getElementById('gradeOutput').textContent = studentGrade;
-    document.getElementById('presentOutput').textContent = isPresent ? 'Yes' : 'No';
+    document.getElementById('presentOutput').textContent = isPresent ? 'ACTIVE' : 'INACTIVE';
 
-    // Also log to console for learning purposes
-    console.log('Student Information:', {
+    console.log('Agent Profile Updated:', {
         Name: studentName,
         Age: studentAge,
-        Grade: studentGrade,
-        'Attendance Status': isPresent
+        'Clearance Level': studentGrade,
+        'Active Status': isPresent
     });
 }
 
@@ -44,14 +42,13 @@ function calculateArithmetic() {
         'Modulus (%)': num1 % num2
     };
 
-    // Create HTML output
     const output = Object.entries(results)
         .map(([operation, result]) => 
-            `<div><span class="result-label">${operation}:</span> ${result}</div>`)
+            `<div><span class="result-label">> ${operation}:</span> ${result}</div>`)
         .join('');
 
     document.getElementById('arithmeticOutput').innerHTML = output;
-    console.log('Arithmetic Operations:', results);
+    console.log('Arithmetic Protocols Executed:', results);
 }
 
 function compareNumbers() {
@@ -67,14 +64,13 @@ function compareNumbers() {
         'Less than or equal to (<=)': num1 <= num2
     };
 
-    // Create HTML output
     const output = Object.entries(results)
         .map(([operation, result]) => 
-            `<div><span class="result-label">${operation}:</span> ${result}</div>`)
+            `<div><span class="result-label">> ${operation}:</span> ${result}</div>`)
         .join('');
 
     document.getElementById('comparisonOutput').innerHTML = output;
-    console.log('Comparison Operations:', results);
+    console.log('Comparison Protocols Executed:', results);
 }
 
 function checkLogical() {
@@ -89,20 +85,71 @@ function checkLogical() {
         'At least one number is even': num1 % 2 === 0 || num2 % 2 === 0
     };
 
-    // Create HTML output
     const output = Object.entries(results)
         .map(([operation, result]) => 
-            `<div><span class="result-label">${operation}:</span> ${result}</div>`)
+            `<div><span class="result-label">> ${operation}:</span> ${result}</div>`)
         .join('');
 
     document.getElementById('logicalOutput').innerHTML = output;
-    console.log('Logical Operations:', results);
+    console.log('Logical Protocols Executed:', results);
 }
 
-// Initialize the displays when the page loads
+// Part 3: Advanced Hacking Protocols
+function executeCode() {
+    const code = document.getElementById('hackingCode').value;
+    hackLog('Initializing code execution...');
+    
+    try {
+        const result = eval(code); // Note: eval is used for demonstration purposes
+        hackLog('Code executed successfully');
+        if (result !== undefined) {
+            hackLog(`Output: ${result}`);
+        }
+    } catch (error) {
+        hackLog(error.message, 'error');
+    }
+}
+
+function encryptMessage() {
+    const key = document.getElementById('encryptionKey').value;
+    if (!key) {
+        hackLog('Encryption key required', 'error');
+        return;
+    }
+
+    const message = document.getElementById('hackingCode').value;
+    hackLog('Initiating encryption protocol...');
+
+    // Simple XOR encryption for demonstration
+    const encrypted = Array.from(message)
+        .map(char => String.fromCharCode(char.charCodeAt(0) ^ key.charCodeAt(0)))
+        .join('');
+
+    hackLog('Encryption complete');
+    document.getElementById('hackingCode').value = encrypted;
+}
+
+function generateMatrix() {
+    hackLog('Generating matrix sequence...');
+    
+    const characters = '01';
+    const lines = [];
+    
+    for (let i = 0; i < 5; i++) {
+        let line = '';
+        for (let j = 0; j < 20; j++) {
+            line += characters.charAt(Math.floor(Math.random() * characters.length));
+        }
+        lines.push(line);
+        hackLog(line);
+    }
+}
+
+// Initialize all displays when the page loads
 document.addEventListener('DOMContentLoaded', () => {
     updateStudentInfo();
     calculateArithmetic();
     compareNumbers();
     checkLogical();
+    hackLog('System initialization complete');
 });
