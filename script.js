@@ -52,9 +52,19 @@ setInterval(drawMatrix, 50);
 
 // Type Analysis Functions
 function updateStringResults() {
-    const basicString = document.getElementById('stringInput').value;
-    const concatString = document.getElementById('stringConcatInput').value;
-    const templateString = document.getElementById('templateInput').value;
+    const stringInput = document.getElementById('stringInput');
+    const stringConcatInput = document.getElementById('stringConcatInput');
+    const templateInput = document.getElementById('templateInput');
+    const stringResults = document.getElementById('stringResults');
+
+    // Only proceed if all elements exist
+    if (!stringInput || !stringConcatInput || !templateInput || !stringResults) {
+        return;
+    }
+
+    const basicString = stringInput.value;
+    const concatString = stringConcatInput.value;
+    const templateString = templateInput.value;
 
     const results = [
         `Basic String: "${basicString}" (length: ${basicString.length})`,
@@ -66,7 +76,7 @@ function updateStringResults() {
         `Type: ${typeof basicString}`
     ];
 
-    document.getElementById('stringResults').innerHTML = `
+    stringResults.innerHTML = `
         <h4>String Results:</h4>
         <ul>${results.map(r => `<li>${r}</li>`).join('')}</ul>
     `;
