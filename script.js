@@ -51,37 +51,6 @@ window.addEventListener('resize', setupMatrix);
 setInterval(drawMatrix, 50);
 
 // Type Analysis Functions
-function updateStringResults() {
-    const stringInput = document.getElementById('stringInput');
-    const stringConcatInput = document.getElementById('stringConcatInput');
-    const templateInput = document.getElementById('templateInput');
-    const stringResults = document.getElementById('stringResults');
-
-    // Only proceed if all elements exist
-    if (!stringInput || !stringConcatInput || !templateInput || !stringResults) {
-        return;
-    }
-
-    const basicString = stringInput.value;
-    const concatString = stringConcatInput.value;
-    const templateString = templateInput.value;
-
-    const results = [
-        `Basic String: "${basicString}" (length: ${basicString.length})`,
-        `Concatenation: "${basicString + ' ' + concatString}"`,
-        `Template Literal: \`Hello, ${templateString}!\``,
-        `Upper Case: "${basicString.toUpperCase()}"`,
-        `Lower Case: "${basicString.toLowerCase()}"`,
-        `Character at 0: "${basicString.charAt(0)}"`,
-        `Type: ${typeof basicString}`
-    ];
-
-    stringResults.innerHTML = `
-        <h4>String Results:</h4>
-        <ul>${results.map(r => `<li>${r}</li>`).join('')}</ul>
-    `;
-}
-
 function updateNumberResults() {
     const integer = parseInt(document.getElementById('integerInput').value);
     const float = parseFloat(document.getElementById('floatInput').value);
@@ -219,19 +188,6 @@ function updateConversionResults() {
         <h4>Type Conversion Results:</h4>
         <ul>${results.map(r => `<li>${r}</li>`).join('')}</ul>
     `;
-}
-
-// Update all results
-function updateAllResults() {
-    updateStringResults();
-    updateNumberResults();
-    updateBooleanResults();
-    updateUndefinedNullResults();
-    updateObjectResults();
-    updateArrayResults();
-    updateConversionResults();
-    updateCalculatorResults();
-    updateComparisonResults();
 }
 
 // Calculator Operations
@@ -385,16 +341,12 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Only call updateAllResults if the necessary elements exist
-    const requiredElements = [
-        'stringInput', 'stringConcatInput', 'templateInput',
-        'stringResults', 'numberResults', 'booleanResults'
-    ];
-    
-    const allElementsExist = requiredElements.every(id => document.getElementById(id));
-    if (allElementsExist) {
-        updateAllResults();
-    }
+    // Initialize Matrix Rain Effect
+    createMatrixRain();
+
+    // Initial setup
+    editor.refresh();
+    editor.focus();
 });
 
 // Debounce function
@@ -699,14 +651,10 @@ function analyzeCode(code) {
         
         acorn.walk.simple(ast, {
             VariableDeclarator(node) {
-                if (node.id && node.id.name) {
-                    variables.add(node.id.name);
-                }
+                variables.add(node.id.name);
             },
             FunctionDeclaration(node) {
-                if (node.id && node.id.name) {
-                    functions.add(node.id.name);
-                }
+                functions.add(node.id.name);
             }
         });
         
@@ -719,8 +667,6 @@ function analyzeCode(code) {
 // UI Updates
 function updateTypeInspector(variables, functions) {
     const inspector = document.getElementById('typeInspector');
-    if (!inspector) return;
-    
     inspector.innerHTML = `
         <div class="inspector-section">
             <h4>Variables (${variables.length})</h4>
@@ -735,8 +681,6 @@ function updateTypeInspector(variables, functions) {
 
 function updateProblems(error) {
     const problems = document.getElementById('problems');
-    if (!problems) return;
-    
     problems.innerHTML += `
         <div class="problem-item error">
             <i class="fas fa-exclamation-circle"></i>
@@ -747,9 +691,7 @@ function updateProblems(error) {
 }
 
 function updateExecutionTime(time) {
-    const timeElement = document.getElementById('executionTime');
-    if (!timeElement) return;
-    timeElement.textContent = `Execution: ${time.toFixed(2)}ms`;
+    document.getElementById('executionTime').textContent = `Execution: ${time.toFixed(2)}ms`;
 }
 
 // Event Listeners
@@ -814,7 +756,7 @@ document.querySelectorAll('.panel-tab').forEach(tab => {
         const panel = tab.getAttribute('data-panel');
         document.getElementById(panel).classList.add('active');
     });
-});
+};
 
 // Initialize Terminal
 const term = new Terminal({
