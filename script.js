@@ -319,7 +319,7 @@ function debounce(func, wait) {
 }
 
 // Initialize CodeMirror
-let editor = CodeMirror.fromTextArea(document.getElementById('codeEditor'), {
+const editor = CodeMirror.fromTextArea(document.getElementById('codeEditor'), {
     mode: 'javascript',
     theme: 'monokai',
     lineNumbers: true,
@@ -333,229 +333,505 @@ let editor = CodeMirror.fromTextArea(document.getElementById('codeEditor'), {
     extraKeys: {
         'Ctrl-Space': 'autocomplete',
         'Ctrl-/': 'toggleComment',
-        'Ctrl-Enter': runCode
+        'Ctrl-Enter': function(cm) {
+            runCode();
+        }
     }
 });
 
-// Theme selector
-document.getElementById('syntaxTheme').addEventListener('change', (e) => {
-    editor.setOption('theme', e.target.value);
-});
-
-// Example code snippets
-const examples = {
-    string: `// String Operations
-let str = "Hello, World!";
-console.log(typeof str);
-console.log(str.toUpperCase());
-console.log(str.toLowerCase());
-console.log(str.split(", "));
-console.log(\`Template literal: \${str}\`);`,
-
-    number: `// Number Operations
-let num = 42;
-console.log(typeof num);
-console.log(Math.sqrt(num));
-console.log(num.toFixed(2));
-console.log(Number.isInteger(num));
-console.log(Number.MAX_SAFE_INTEGER);`,
-
-    boolean: `// Boolean Operations
-let bool = true;
-console.log(typeof bool);
-console.log(!bool);
-console.log(Boolean(1));
-console.log(Boolean(""));
-console.log(true && false);
-console.log(true || false);`,
-
-    object: `// Object Operations
-let obj = {
-    name: "John",
-    age: 30,
-    city: "New York"
+// Initialize output console
+const output = {
+    log: function(message) {
+        const outputDiv = document.getElementById('output');
+        if (!outputDiv) return;
+        const logEntry = document.createElement('div');
+        logEntry.className = 'console-log';
+        logEntry.textContent = message;
+        outputDiv.appendChild(logEntry);
+        outputDiv.scrollTop = outputDiv.scrollHeight;
+    },
+    error: function(message) {
+        const outputDiv = document.getElementById('output');
+        if (!outputDiv) return;
+        const errorEntry = document.createElement('div');
+        errorEntry.className = 'console-error';
+        errorEntry.textContent = '❌ ' + message;
+        outputDiv.appendChild(errorEntry);
+        outputDiv.scrollTop = outputDiv.scrollHeight;
+    },
+    info: function(message) {
+        const outputDiv = document.getElementById('output');
+        if (!outputDiv) return;
+        const infoEntry = document.createElement('div');
+        infoEntry.className = 'console-info';
+        infoEntry.textContent = 'ℹ️ ' + message;
+        outputDiv.appendChild(infoEntry);
+        outputDiv.scrollTop = outputDiv.scrollHeight;
+    },
+    success: function(message) {
+        const outputDiv = document.getElementById('output');
+        if (!outputDiv) return;
+        const successEntry = document.createElement('div');
+        successEntry.className = 'console-success';
+        successEntry.textContent = '✅ ' + message;
+        outputDiv.appendChild(successEntry);
+        outputDiv.scrollTop = outputDiv.scrollHeight;
+    },
+    clear: function() {
+        const outputDiv = document.getElementById('output');
+        if (!outputDiv) return;
+        outputDiv.innerHTML = '';
+        const problemsDiv = document.getElementById('problems');
+        if (problemsDiv) {
+            problemsDiv.innerHTML = '';
+        }
+    }
 };
-console.log(typeof obj);
-console.log(Object.keys(obj));
-console.log(Object.values(obj));
-console.log(obj.hasOwnProperty("name"));`,
 
-    array: `// Array Operations
-let arr = [1, 2, 3, 4, 5];
-console.log(typeof arr);
-console.log(Array.isArray(arr));
-console.log(arr.map(x => x * 2));
-console.log(arr.filter(x => x > 2));
-console.log(arr.reduce((a, b) => a + b));`
-};
-
-// Load example code
-document.querySelectorAll('.example-list li').forEach(item => {
-    item.addEventListener('click', () => {
-        const example = item.getAttribute('data-example');
-        editor.setValue(examples[example]);
-        editor.focus();
-    });
-});
-
-// Console implementation
-class Console {
-    constructor(outputElement) {
-        this.output = document.getElementById(outputElement);
-    }
-
-    log(...args) {
-        this.appendOutput(args.join(' '), 'console-log');
-    }
-
-    error(...args) {
-        this.appendOutput(args.join(' '), 'console-error');
-    }
-
-    warn(...args) {
-        this.appendOutput(args.join(' '), 'console-warn');
-    }
-
-    info(...args) {
-        this.appendOutput(args.join(' '), 'console-info');
-    }
-
-    clear() {
-        this.output.innerHTML = '';
-    }
-
-    appendOutput(content, className) {
-        const line = document.createElement('div');
-        line.className = className;
-        line.textContent = content;
-        this.output.appendChild(line);
-        this.output.scrollTop = this.output.scrollHeight;
-    }
-}
-
-const consoleOutput = new Console('console-output');
-const output = new Console('output');
-
-// Run code implementation
+// Code Execution
 function runCode() {
     const code = editor.getValue();
-    output.clear();
-    consoleOutput.clear();
-
+    const startTime = performance.now();
+    
     try {
-        // Create a safe evaluation context
-        const context = {
-            console: {
-                log: (...args) => output.log(...args),
-                error: (...args) => output.error(...args),
-                warn: (...args) => output.warn(...args),
-                info: (...args) => output.info(...args)
+        // Create a secure context for code execution
+        const secureEval = new Function('output', `
+            with (Object.create(null)) {
+                try {
+                    ${code}
+                } catch (error) {
+                    output.error(error.message);
+                    throw error;
+                }
             }
-        };
-
-        // Add all the built-in objects and functions we want to allow
-        const safeGlobals = [
-            'String', 'Number', 'Boolean', 'Array', 'Object', 'Math',
-            'parseInt', 'parseFloat', 'isNaN', 'isFinite', 'Date',
-            'RegExp', 'JSON', 'Map', 'Set', 'Promise', 'setTimeout'
-        ];
-
-        safeGlobals.forEach(name => {
-            context[name] = window[name];
-        });
-
-        // Create function with controlled context
-        const fn = new Function(...Object.keys(context), code);
+        `);
         
-        // Execute the code with the safe context
-        fn(...Object.values(context));
-        
-        // Update type inspector
-        updateTypeInspector(code);
-    } catch (err) {
-        output.error(err.toString());
+        secureEval(output);
+        const endTime = performance.now();
+        output.success(`Code executed successfully in ${(endTime - startTime).toFixed(2)}ms`);
+        updateExecutionTime(endTime - startTime);
+        analyzeCode(code);
+    } catch (error) {
+        output.error(error.message);
+        updateProblems(error);
     }
 }
 
-// Type inspector implementation
-function updateTypeInspector(code) {
-    const inspector = document.getElementById('typeInspector');
-    inspector.innerHTML = '';
-
+// Code Analysis
+function analyzeCode(code) {
     try {
         const ast = acorn.parse(code, { ecmaVersion: 2020 });
-        const declarations = [];
-
-        // Walk the AST to find variable declarations
-        walk.simple(ast, {
+        const variables = new Set();
+        const functions = new Set();
+        
+        acorn.walk.simple(ast, {
             VariableDeclarator(node) {
-                try {
-                    const name = node.id.name;
-                    const value = eval(escodegen.generate(node.init));
-                    const type = typeof value;
-                    declarations.push({ name, value, type });
-                } catch (e) {
-                    // Skip if we can't evaluate the value
+                if (node.id && node.id.name) {
+                    variables.add(node.id.name);
+                }
+            },
+            FunctionDeclaration(node) {
+                if (node.id && node.id.name) {
+                    functions.add(node.id.name);
                 }
             }
         });
-
-        // Display the type information
-        declarations.forEach(({ name, value, type }) => {
-            const item = document.createElement('div');
-            item.className = 'inspector-item';
-            item.innerHTML = `
-                <strong>${name}</strong>: ${type}
-                <span class="inspector-value">${JSON.stringify(value)}</span>
-            `;
-            inspector.appendChild(item);
-        });
-    } catch (err) {
-        inspector.innerHTML = '<div class="error">Error analyzing types</div>';
+        
+        updateTypeInspector(Array.from(variables), Array.from(functions));
+    } catch (error) {
+        console.error('Analysis error:', error);
     }
 }
 
-// Button event listeners
-document.getElementById('runCode').addEventListener('click', runCode);
-document.getElementById('clearCode').addEventListener('click', () => {
-    editor.setValue('');
-    output.clear();
-    consoleOutput.clear();
+// UI Updates
+function updateTypeInspector(variables, functions) {
+    const inspector = document.getElementById('typeInspector');
+    if (!inspector) return;
+    
+    inspector.innerHTML = `
+        <div class="inspector-section">
+            <h4>Variables (${variables.length})</h4>
+            ${variables.map(v => `<div class="inspector-item">${v}</div>`).join('')}
+        </div>
+        <div class="inspector-section">
+            <h4>Functions (${functions.length})</h4>
+            ${functions.map(f => `<div class="inspector-item">${f}</div>`).join('')}
+        </div>
+    `;
+}
+
+function updateProblems(error) {
+    const problems = document.getElementById('problems');
+    if (!problems) return;
+    
+    problems.innerHTML += `
+        <div class="problem-item error">
+            <i class="fas fa-exclamation-circle"></i>
+            ${error.message}
+            <div class="problem-location">at line ${error.lineNumber || 'unknown'}</div>
+        </div>
+    `;
+}
+
+function updateExecutionTime(time) {
+    const timeElement = document.getElementById('executionTime');
+    if (!timeElement) return;
+    timeElement.textContent = `Execution: ${time.toFixed(2)}ms`;
+}
+
+// Event Listeners
+document.addEventListener('DOMContentLoaded', function() {
+    // Run Button
+    const runButton = document.getElementById('runButton');
+    if (runButton) {
+        runButton.addEventListener('click', runCode);
+    }
+
+    // Clear Button
+    const clearButton = document.getElementById('clearButton');
+    if (clearButton) {
+        clearButton.addEventListener('click', () => {
+            editor.setValue('');
+            output.clear();
+        });
+    }
+
+    // Format Button
+    const formatButton = document.getElementById('formatButton');
+    if (formatButton) {
+        formatButton.addEventListener('click', () => {
+            try {
+                const code = editor.getValue();
+                const formatted = prettier.format(code, {
+                    parser: 'babel',
+                    plugins: prettierPlugins,
+                    singleQuote: true,
+                    tabWidth: 4
+                });
+                editor.setValue(formatted);
+                output.info('Code formatted successfully');
+            } catch (error) {
+                output.error('Format error: ' + error.message);
+            }
+        });
+    }
+
+    // Copy Button
+    const copyButton = document.getElementById('copyCode');
+    if (copyButton) {
+        copyButton.addEventListener('click', () => {
+            const code = editor.getValue();
+            navigator.clipboard.writeText(code).then(() => {
+                output.info('Code copied to clipboard!');
+            }).catch(err => {
+                output.error('Failed to copy code: ' + err.message);
+            });
+        });
+    }
+
+    // Theme Selector
+    const themeSelect = document.getElementById('syntaxTheme');
+    if (themeSelect) {
+        themeSelect.addEventListener('change', (e) => {
+            editor.setOption('theme', e.target.value);
+        });
+    }
+
+    // Status Bar Updates
+    editor.on('cursorActivity', () => {
+        const pos = editor.getCursor();
+        const cursorPosition = document.getElementById('cursorPosition');
+        if (cursorPosition) {
+            cursorPosition.textContent = `Line: ${pos.line + 1}, Col: ${pos.ch + 1}`;
+        }
+    });
+
+    editor.on('change', () => {
+        const size = new Blob([editor.getValue()]).size;
+        const fileSize = document.getElementById('fileSize');
+        if (fileSize) {
+            fileSize.textContent = `Size: ${size} bytes`;
+        }
+    });
+
+    // Tab Management
+    const tabs = document.querySelectorAll('.panel-tab');
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            document.querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.panel-section').forEach(s => s.classList.remove('active'));
+            
+            tab.classList.add('active');
+            const panel = tab.getAttribute('data-panel');
+            const panelElement = document.getElementById(panel);
+            if (panelElement) {
+                panelElement.classList.add('active');
+            }
+        });
+    });
+
+    // Initial setup
+    editor.refresh();
+    editor.focus();
 });
 
-document.getElementById('formatCode').addEventListener('click', () => {
+// Initialize Terminal
+const term = new Terminal({
+    cursorBlink: true,
+    cursorStyle: 'block',
+    fontSize: 14,
+    fontFamily: 'Courier New',
+    theme: {
+        background: '#000000',
+        foreground: '#ffffff',
+        cursor: '#ff0000',
+        selection: 'rgba(255, 0, 0, 0.3)',
+        black: '#000000',
+        red: '#ff0000',
+        green: '#33ff00',
+        yellow: '#ffff00',
+        blue: '#0066ff',
+        magenta: '#cc00ff',
+        cyan: '#00ffff',
+        white: '#d0d0d0',
+        brightBlack: '#808080',
+        brightRed: '#ff0000',
+        brightGreen: '#33ff00',
+        brightYellow: '#ffff00',
+        brightBlue: '#0066ff',
+        brightMagenta: '#cc00ff',
+        brightCyan: '#00ffff',
+        brightWhite: '#ffffff'
+    }
+});
+
+term.open(document.getElementById('terminal'));
+term.write('JavaScript Security Lab Terminal\r\n$ ');
+
+// Terminal Input Handler
+let currentLine = '';
+term.onKey(({ key, domEvent }) => {
+    const printable = !domEvent.altKey && !domEvent.ctrlKey && !domEvent.metaKey;
+
+    if (domEvent.keyCode === 13) { // Enter
+        term.write('\r\n');
+        executeCommand(currentLine);
+        currentLine = '';
+        term.write('$ ');
+    } else if (domEvent.keyCode === 8) { // Backspace
+        if (currentLine.length > 0) {
+            currentLine = currentLine.slice(0, -1);
+            term.write('\b \b');
+        }
+    } else if (printable) {
+        currentLine += key;
+        term.write(key);
+    }
+});
+
+// Command Execution
+function executeCommand(command) {
+    if (!command) return;
+
+    switch (command.trim().toLowerCase()) {
+        case 'clear':
+            term.clear();
+            term.write('JavaScript Security Lab Terminal\r\n$ ');
+            break;
+        case 'help':
+            term.write(
+                'Available commands:\r\n' +
+                '  clear     Clear the terminal\r\n' +
+                '  help      Show this help message\r\n' +
+                '  run       Run the current code\r\n' +
+                '  theme     Show available themes\r\n' +
+                '  version   Show environment version\r\n'
+            );
+            break;
+        case 'run':
+            term.write('Executing code...\r\n');
+            runCode();
+            break;
+        case 'theme':
+            term.write(
+                'Available themes:\r\n' +
+                '  monokai\r\n' +
+                '  dracula\r\n' +
+                '  material\r\n'
+            );
+            break;
+        case 'version':
+            term.write('JavaScript Security Lab v1.0.0\r\n');
+            break;
+        default:
+            try {
+                const result = eval(command);
+                term.write(String(result) + '\r\n');
+            } catch (error) {
+                term.write('Error: ' + error.message + '\r\n');
+            }
+    }
+}
+
+// Output Console
+const outputConsole = {
+    log: function(message) {
+        const outputDiv = document.getElementById('output');
+        const logEntry = document.createElement('div');
+        logEntry.className = 'console-log';
+        logEntry.textContent = message;
+        outputDiv.appendChild(logEntry);
+        outputDiv.scrollTop = outputDiv.scrollHeight;
+        term.write('[LOG] ' + message + '\r\n');
+    },
+    error: function(message) {
+        const outputDiv = document.getElementById('output');
+        const errorEntry = document.createElement('div');
+        errorEntry.className = 'console-error';
+        errorEntry.textContent = '❌ ' + message;
+        outputDiv.appendChild(errorEntry);
+        outputDiv.scrollTop = outputDiv.scrollHeight;
+        term.write('[ERROR] ' + message + '\r\n');
+    },
+    info: function(message) {
+        const outputDiv = document.getElementById('output');
+        const infoEntry = document.createElement('div');
+        infoEntry.className = 'console-info';
+        infoEntry.textContent = 'ℹ️ ' + message;
+        outputDiv.appendChild(infoEntry);
+        outputDiv.scrollTop = outputDiv.scrollHeight;
+        term.write('[INFO] ' + message + '\r\n');
+    },
+    success: function(message) {
+        const outputDiv = document.getElementById('output');
+        const successEntry = document.createElement('div');
+        successEntry.className = 'console-success';
+        successEntry.textContent = '✅ ' + message;
+        outputDiv.appendChild(successEntry);
+        outputDiv.scrollTop = outputDiv.scrollHeight;
+        term.write('[SUCCESS] ' + message + '\r\n');
+    },
+    clear: function() {
+        const outputDiv = document.getElementById('output');
+        outputDiv.innerHTML = '';
+        document.getElementById('problems').innerHTML = '';
+    }
+};
+
+// Code Execution
+function runCode() {
+    const code = editor.getValue();
+    const startTime = performance.now();
+    
+    try {
+        // Create a secure context for code execution
+        const secureEval = new Function('output', `
+            with (Object.create(null)) {
+                try {
+                    ${code}
+                } catch (error) {
+                    output.error(error.message);
+                    throw error;
+                }
+            }
+        `);
+        
+        secureEval(outputConsole);
+        const endTime = performance.now();
+        outputConsole.success(`Code executed successfully in ${(endTime - startTime).toFixed(2)}ms`);
+        updateExecutionTime(endTime - startTime);
+        analyzeCode(code);
+    } catch (error) {
+        outputConsole.error(error.message);
+        updateProblems(error);
+    }
+}
+
+// Code Analysis
+function analyzeCode(code) {
+    try {
+        const ast = acorn.parse(code, { ecmaVersion: 2020 });
+        const variables = new Set();
+        const functions = new Set();
+        
+        acorn.walk.simple(ast, {
+            VariableDeclarator(node) {
+                variables.add(node.id.name);
+            },
+            FunctionDeclaration(node) {
+                functions.add(node.id.name);
+            }
+        });
+        
+        updateTypeInspector(Array.from(variables), Array.from(functions));
+    } catch (error) {
+        console.error('Analysis error:', error);
+    }
+}
+
+// UI Updates
+function updateTypeInspector(variables, functions) {
+    const inspector = document.getElementById('typeInspector');
+    inspector.innerHTML = `
+        <div class="inspector-section">
+            <h4>Variables (${variables.length})</h4>
+            ${variables.map(v => `<div class="inspector-item">${v}</div>`).join('')}
+        </div>
+        <div class="inspector-section">
+            <h4>Functions (${functions.length})</h4>
+            ${functions.map(f => `<div class="inspector-item">${f}</div>`).join('')}
+        </div>
+    `;
+}
+
+function updateProblems(error) {
+    const problems = document.getElementById('problems');
+    problems.innerHTML += `
+        <div class="problem-item error">
+            <i class="fas fa-exclamation-circle"></i>
+            ${error.message}
+            <div class="problem-location">at line ${error.lineNumber || 'unknown'}</div>
+        </div>
+    `;
+}
+
+function updateExecutionTime(time) {
+    document.getElementById('executionTime').textContent = `Execution: ${time.toFixed(2)}ms`;
+}
+
+// Event Listeners
+document.getElementById('runButton').addEventListener('click', runCode);
+
+document.getElementById('clearButton').addEventListener('click', () => {
+    editor.setValue('');
+    outputConsole.clear();
+    term.clear();
+    term.write('JavaScript Security Lab Terminal\r\n$ ');
+});
+
+document.getElementById('formatButton').addEventListener('click', () => {
     try {
         const code = editor.getValue();
         const formatted = prettier.format(code, {
             parser: 'babel',
             plugins: prettierPlugins,
-            semi: true,
-            singleQuote: true
+            singleQuote: true,
+            tabWidth: 4
         });
         editor.setValue(formatted);
-    } catch (err) {
-        output.error('Error formatting code: ' + err.message);
+        outputConsole.info('Code formatted successfully');
+    } catch (error) {
+        outputConsole.error('Format error: ' + error.message);
     }
 });
 
-document.getElementById('shareCode').addEventListener('click', () => {
-    const code = editor.getValue();
-    const encoded = encodeURIComponent(code);
-    const url = `${window.location.href.split('?')[0]}?code=${encoded}`;
-    
-    navigator.clipboard.writeText(url).then(() => {
-        output.info('Share URL copied to clipboard!');
-    }).catch(err => {
-        output.error('Failed to copy share URL: ' + err.message);
-    });
-});
-
+// Copy button handler
 document.getElementById('copyCode').addEventListener('click', () => {
     const code = editor.getValue();
     navigator.clipboard.writeText(code).then(() => {
-        output.info('Code copied to clipboard!');
+        outputConsole.info('Code copied to clipboard!');
     }).catch(err => {
-        output.error('Failed to copy code: ' + err.message);
+        outputConsole.error('Failed to copy code: ' + err.message);
     });
 });
 
@@ -572,15 +848,66 @@ editor.on('change', () => {
         `Size: ${size} bytes`;
 });
 
-// Load shared code from URL if present
-window.addEventListener('load', () => {
-    const params = new URLSearchParams(window.location.search);
-    const code = params.get('code');
-    if (code) {
-        try {
-            editor.setValue(decodeURIComponent(code));
-        } catch (err) {
-            output.error('Error loading shared code: ' + err.message);
+// Theme Selector
+document.getElementById('syntaxTheme').addEventListener('change', (e) => {
+    editor.setOption('theme', e.target.value);
+});
+
+// Tab Management
+document.querySelectorAll('.panel-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+        document.querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.panel-section').forEach(s => s.classList.remove('active'));
+        
+        tab.classList.add('active');
+        const panel = tab.getAttribute('data-panel');
+        document.getElementById(panel).classList.add('active');
+    });
+});
+
+// Matrix Rain Effect
+function createMatrixRain() {
+    const canvas = document.createElement('canvas');
+    canvas.className = 'matrix-rain';
+    document.body.appendChild(canvas);
+    
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    
+    const chars = '01'.split('');
+    const drops = [];
+    const fontSize = 14;
+    const columns = canvas.width / fontSize;
+    
+    for (let i = 0; i < columns; i++) {
+        drops[i] = 1;
+    }
+    
+    function draw() {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        ctx.fillStyle = '#ff0000';
+        ctx.font = fontSize + 'px monospace';
+        
+        for (let i = 0; i < drops.length; i++) {
+            const text = chars[Math.floor(Math.random() * chars.length)];
+            ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+            
+            if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                drops[i] = 0;
+            }
+            drops[i]++;
         }
     }
-});
+    
+    setInterval(draw, 35);
+}
+
+// Initialize Matrix Rain
+createMatrixRain();
+
+// Initial setup
+editor.refresh();
+editor.focus();

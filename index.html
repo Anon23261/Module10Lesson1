@@ -3,111 +3,202 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Permissions-Policy" content="interest-cohort=(), attribution-reporting=(), run-ad-auction=(), join-ad-interest-group=(), browsing-topics=(), compute-pressure=()">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔒</text></svg>">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>JavaScript Security Lab</title>
+    
+    <!-- Core Styles -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- CodeMirror -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/dracula.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/material.min.css">
-    <link rel="stylesheet" href="style.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prettier/2.8.1/standalone.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prettier/2.8.1/parser-babel.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/acorn/8.7.0/acorn.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/acorn-walk/8.7.0/walk.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/escodegen/2.0.0/escodegen.min.js"></script>
-    <title>JavaScript Security Lab - IDE</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/show-hint.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/fold/foldgutter.min.css">
+    
+    <!-- Terminal -->
+    <link rel="stylesheet" href="https://unpkg.com/xterm@4.19.0/css/xterm.css">
 </head>
 <body>
     <div class="container">
-        <div class="ide-header">
-            <h1 class="glitch">JavaScript Security Lab</h1>
-            <div class="ide-controls">
-                <button id="runCode" class="primary-button" data-tooltip="Run code (Ctrl + Enter)">▶ Run</button>
-                <button id="clearCode" data-tooltip="Clear editor and console">⌫ Clear</button>
-                <button id="formatCode" data-tooltip="Format code with Prettier">⚡ Format</button>
-                <button id="shareCode" data-tooltip="Generate shareable URL">↗ Share</button>
-                <select id="syntaxTheme" class="theme-select" data-tooltip="Change editor theme">
-                    <option value="monokai">Monokai</option>
-                    <option value="dracula">Dracula</option>
-                    <option value="material">Material</option>
-                </select>
+        <div class="matrix-bg"></div>
+        
+        <!-- Menu Bar -->
+        <div class="menu-bar">
+            <div class="menu-item">
+                <i class="fas fa-file"></i> File
+                <div class="menu-dropdown">
+                    <div class="menu-option" id="newFile"><i class="fas fa-plus"></i> New File</div>
+                    <div class="menu-option" id="openFile"><i class="fas fa-folder-open"></i> Open</div>
+                    <div class="menu-option" id="saveFile"><i class="fas fa-save"></i> Save</div>
+                </div>
+            </div>
+            <div class="menu-item">
+                <i class="fas fa-edit"></i> Edit
+                <div class="menu-dropdown">
+                    <div class="menu-option" id="formatCode"><i class="fas fa-magic"></i> Format Code</div>
+                    <div class="menu-option" id="findReplace"><i class="fas fa-search"></i> Find/Replace</div>
+                </div>
+            </div>
+            <div class="menu-item">
+                <i class="fas fa-cog"></i> Settings
+                <div class="menu-dropdown">
+                    <div class="menu-option">
+                        <i class="fas fa-palette"></i> Theme
+                        <select id="syntaxTheme">
+                            <option value="monokai">Monokai</option>
+                            <option value="dracula">Dracula</option>
+                        </select>
+                    </div>
+                </div>
             </div>
         </div>
 
+        <!-- Main IDE Layout -->
         <div class="ide-layout">
+            <!-- Left Sidebar -->
             <div class="ide-sidebar">
                 <div class="sidebar-section">
-                    <h3>Examples</h3>
-                    <ul class="example-list">
-                        <li data-example="string">String Operations</li>
-                        <li data-example="number">Number Operations</li>
-                        <li data-example="boolean">Boolean Logic</li>
-                        <li data-example="object">Object Manipulation</li>
-                        <li data-example="array">Array Methods</li>
-                    </ul>
+                    <h3><i class="fas fa-folder"></i> Project Files</h3>
+                    <div class="file-tree">
+                        <div class="file-item active"><i class="fas fa-code"></i> script.js</div>
+                        <div class="file-item"><i class="fas fa-file-code"></i> index.html</div>
+                        <div class="file-item"><i class="fas fa-file-code"></i> style.css</div>
+                    </div>
                 </div>
                 <div class="sidebar-section">
-                    <h3>Console</h3>
-                    <div id="console-output" class="console"></div>
+                    <h3><i class="fas fa-book"></i> Documentation</h3>
+                    <div class="doc-list">
+                        <div class="doc-item">JavaScript Basics</div>
+                        <div class="doc-item">Security Best Practices</div>
+                        <div class="doc-item">API Reference</div>
+                    </div>
                 </div>
             </div>
 
+            <!-- Main Editor Area -->
             <div class="ide-main">
                 <div class="code-section">
-                    <div class="code-header">
-                        <span class="file-name">script.js</span>
-                        <div class="code-controls">
-                            <button id="copyCode" class="mini-button" data-tooltip="Copy code to clipboard">📋 Copy</button>
+                    <!-- Editor Controls -->
+                    <div class="editor-controls">
+                        <button id="runButton" class="primary-button" title="Run Code (Ctrl+Enter)">
+                            <i class="fas fa-play"></i> Run
+                        </button>
+                        <button id="clearButton" title="Clear Editor">
+                            <i class="fas fa-eraser"></i> Clear
+                        </button>
+                        <button id="formatButton" title="Format Code">
+                            <i class="fas fa-magic"></i> Format
+                        </button>
+                        <button id="copyCode" title="Copy Code">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                    </div>
+
+                    <!-- Code Editor -->
+                    <div class="editor-container">
+                        <textarea id="codeEditor">// JavaScript Security Lab
+// Try out different code examples and explore security concepts!
+
+// Example 1: String Manipulation
+let userInput = "Hello, <script>alert('XSS')</script>";
+let sanitized = userInput.replace(/<[^>]*>/g, '');
+console.log('Sanitized:', sanitized);
+
+// Example 2: Input Validation
+function validateNumber(input) {
+    if (typeof input !== 'number' || isNaN(input)) {
+        throw new Error('Invalid number input');
+    }
+    return input;
+}
+
+// Example 3: Secure Object
+const safeObject = Object.freeze({
+    key: 'value',
+    nested: Object.freeze({ secure: true })
+});
+
+// Try your own code below:</textarea>
+                    </div>
+
+                    <!-- Bottom Panel -->
+                    <div class="bottom-panel">
+                        <div class="panel-tabs">
+                            <div class="panel-tab active" data-panel="terminal">
+                                <i class="fas fa-terminal"></i> Terminal
+                            </div>
+                            <div class="panel-tab" data-panel="output">
+                                <i class="fas fa-stream"></i> Output
+                            </div>
+                            <div class="panel-tab" data-panel="problems">
+                                <i class="fas fa-exclamation-triangle"></i> Problems
+                            </div>
+                        </div>
+                        <div class="panel-content">
+                            <div id="terminal" class="panel-section active"></div>
+                            <div id="output" class="panel-section"></div>
+                            <div id="problems" class="panel-section"></div>
                         </div>
                     </div>
-                    <textarea id="codeEditor" class="code-editor">// Write your JavaScript code here
-let example = "Hello, World!";
-console.log(typeof example);
-
-// Try different data types
-let number = 42;
-let boolean = true;
-let array = [1, 2, 3];
-let object = { key: "value" };
-
-// Test type conversions
-console.log(String(number));
-console.log(Number("42"));
-console.log(Boolean(1));</textarea>
-                </div>
-
-                <div class="output-section">
-                    <div class="output-header">
-                        <h3>Output</h3>
-                        <button id="clearOutput" class="mini-button">Clear Output</button>
-                    </div>
-                    <div id="output" class="output-content"></div>
                 </div>
             </div>
 
+            <!-- Right Panel -->
             <div class="ide-panel">
                 <div class="panel-section">
-                    <h3>Type Inspector</h3>
+                    <h3><i class="fas fa-info-circle"></i> Type Inspector</h3>
                     <div id="typeInspector" class="inspector-content"></div>
                 </div>
                 <div class="panel-section">
-                    <h3>Variable Watch</h3>
+                    <h3><i class="fas fa-eye"></i> Variable Watch</h3>
                     <div id="variableWatch" class="watch-content"></div>
                 </div>
             </div>
         </div>
 
+        <!-- Status Bar -->
         <div class="status-bar">
-            <div class="status-item" id="cursorPosition">Line: 1, Col: 1</div>
-            <div class="status-item" id="fileSize">Size: 0 bytes</div>
-            <div class="status-item" id="executionTime">Execution: 0ms</div>
+            <div class="status-item">
+                <i class="fas fa-code"></i>
+                <span id="cursorPosition">Line: 1, Col: 1</span>
+            </div>
+            <div class="status-item">
+                <i class="fas fa-file-alt"></i>
+                <span id="fileSize">Size: 0 bytes</span>
+            </div>
+            <div class="status-item">
+                <i class="fas fa-clock"></i>
+                <span id="executionTime">Execution: 0ms</span>
+            </div>
         </div>
     </div>
 
+    <!-- CodeMirror Core -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
+    
+    <!-- CodeMirror Addons -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/fold/foldcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/fold/foldgutter.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/show-hint.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/javascript-hint.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/comment/comment.min.js"></script>
+    
+    <!-- Code Analysis -->
+    <script src="https://unpkg.com/prettier@2.8.1/standalone.js"></script>
+    <script src="https://unpkg.com/prettier@2.8.1/parser-babel.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/acorn/8.7.0/acorn.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/acorn-walk/8.7.0/walk.min.js"></script>
+    <script src="https://unpkg.com/escodegen/escodegen.browser.js"></script>
+    
+    <!-- Terminal -->
+    <script src="https://unpkg.com/xterm@4.19.0/lib/xterm.js"></script>
+    <script src="https://unpkg.com/xterm-addon-fit@0.5.0/lib/xterm-addon-fit.js"></script>
+    
+    <!-- Custom Scripts -->
     <script src="script.js"></script>
 </body>
 </html>
