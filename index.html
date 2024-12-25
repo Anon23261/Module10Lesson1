@@ -19,17 +19,17 @@
             </div>
             <div class="input-group">
                 <label for="stringInput">String Test:</label>
-                <input type="text" id="stringInput" class="interactive-input" placeholder="Enter text" value="Hello">
+                <input type="text" id="stringInput" class="interactive-input" placeholder="Enter text" value="Hello" data-tooltip="Try typing special characters!">
                 <span class="type-badge">string</span>
             </div>
             <div class="input-group">
                 <label for="numberInput">Number Test:</label>
-                <input type="number" id="numberInput" class="interactive-input" placeholder="Enter number" value="42">
+                <input type="number" id="numberInput" class="interactive-input" placeholder="Enter number" value="42" data-tooltip="Try decimals and negative numbers!">
                 <span class="type-badge">number</span>
             </div>
             <div class="input-group">
                 <label for="booleanInput">Boolean Test:</label>
-                <select id="booleanInput" class="interactive-input">
+                <select id="booleanInput" class="interactive-input" data-tooltip="Toggle between true and false">
                     <option value="true">true</option>
                     <option value="false">false</option>
                 </select>
@@ -45,11 +45,11 @@
             </div>
             <div class="input-group">
                 <label for="calc1">First Number:</label>
-                <input type="number" id="calc1" class="interactive-input" value="10">
+                <input type="number" id="calc1" class="interactive-input" value="10" data-tooltip="First operand">
             </div>
             <div class="input-group">
                 <label for="operation">Operation:</label>
-                <select id="operation" class="operation-select">
+                <select id="operation" class="operation-select" data-tooltip="Choose your operation">
                     <option value="+">Addition (+)</option>
                     <option value="-">Subtraction (-)</option>
                     <option value="*">Multiplication (×)</option>
@@ -58,7 +58,7 @@
             </div>
             <div class="input-group">
                 <label for="calc2">Second Number:</label>
-                <input type="number" id="calc2" class="interactive-input" value="5">
+                <input type="number" id="calc2" class="interactive-input" value="5" data-tooltip="Second operand">
             </div>
             <div id="calcResult" class="result"></div>
         </div>
@@ -70,18 +70,18 @@
             </div>
             <div class="input-group">
                 <label for="compare1">Test Value 1:</label>
-                <input type="number" id="compare1" class="interactive-input" value="10">
+                <input type="number" id="compare1" class="interactive-input" value="10" data-tooltip="First value to compare">
             </div>
             <div class="input-group">
                 <label for="compare2">Test Value 2:</label>
-                <input type="number" id="compare2" class="interactive-input" value="5">
+                <input type="number" id="compare2" class="interactive-input" value="5" data-tooltip="Second value to compare">
             </div>
             <div id="compareResults" class="result"></div>
         </div>
 
         <div class="controls">
-            <button onclick="updateAllResults()" data-tooltip="Ctrl + Enter">Run Tests</button>
-            <button onclick="clearAllResults()" data-tooltip="Ctrl + Delete">Clear Results</button>
+            <button onclick="updateAllResults()" data-tooltip="Run all tests (Ctrl + Enter)">Run Tests</button>
+            <button onclick="clearAllResults()" data-tooltip="Clear all results (Ctrl + Delete)">Clear Results</button>
         </div>
     </div>
     <script src="script.js"></script>
