@@ -29,16 +29,16 @@
             <div class="menu-item">
                 <i class="fas fa-file"></i> File
                 <div class="menu-dropdown">
-                    <div class="menu-option" id="newFile"><i class="fas fa-plus"></i> New File</div>
-                    <div class="menu-option" id="openFile"><i class="fas fa-folder-open"></i> Open</div>
-                    <div class="menu-option" id="saveFile"><i class="fas fa-save"></i> Save</div>
+                    <div class="menu-option" id="newFile" name="newFile"><i class="fas fa-plus"></i> New File</div>
+                    <div class="menu-option" id="openFile" name="openFile"><i class="fas fa-folder-open"></i> Open</div>
+                    <div class="menu-option" id="saveFile" name="saveFile"><i class="fas fa-save"></i> Save</div>
                 </div>
             </div>
             <div class="menu-item">
                 <i class="fas fa-edit"></i> Edit
                 <div class="menu-dropdown">
-                    <div class="menu-option" id="formatCode"><i class="fas fa-magic"></i> Format Code</div>
-                    <div class="menu-option" id="findReplace"><i class="fas fa-search"></i> Find/Replace</div>
+                    <div class="menu-option" id="formatCode" name="formatCode"><i class="fas fa-magic"></i> Format Code</div>
+                    <div class="menu-option" id="findReplace" name="findReplace"><i class="fas fa-search"></i> Find/Replace</div>
                 </div>
             </div>
             <div class="menu-item">
@@ -46,7 +46,7 @@
                 <div class="menu-dropdown">
                     <div class="menu-option">
                         <i class="fas fa-palette"></i> Theme
-                        <select id="syntaxTheme">
+                        <select id="syntaxTheme" name="syntaxTheme">
                             <option value="monokai">Monokai</option>
                             <option value="dracula">Dracula</option>
                         </select>
@@ -62,17 +62,17 @@
                 <div class="sidebar-section">
                     <h3><i class="fas fa-folder"></i> Project Files</h3>
                     <div class="file-tree">
-                        <div class="file-item active"><i class="fas fa-file-code"></i> index.html</div>
-                        <div class="file-item"><i class="fas fa-code"></i> script.js</div>
-                        <div class="file-item"><i class="fas fa-file-code"></i> style.css</div>
+                        <div class="file-item active" id="projectFiles" name="projectFiles"><i class="fas fa-file-code"></i> index.html</div>
+                        <div class="file-item" id="scriptJs" name="scriptJs"><i class="fas fa-code"></i> script.js</div>
+                        <div class="file-item" id="styleCss" name="styleCss"><i class="fas fa-file-code"></i> style.css</div>
                     </div>
                 </div>
                 <div class="sidebar-section">
                     <h3><i class="fas fa-book"></i> Documentation</h3>
                     <div class="doc-list">
-                        <div class="doc-item">JavaScript Basics</div>
-                        <div class="doc-item">Security Best Practices</div>
-                        <div class="doc-item">API Reference</div>
+                        <div class="doc-item" id="javascriptBasics" name="javascriptBasics">JavaScript Basics</div>
+                        <div class="doc-item" id="securityBestPractices" name="securityBestPractices">Security Best Practices</div>
+                        <div class="doc-item" id="apiReference" name="apiReference">API Reference</div>
                     </div>
                 </div>
             </div>
@@ -82,23 +82,23 @@
                 <div class="code-section">
                     <!-- Editor Controls -->
                     <div class="editor-controls">
-                        <button id="runButton" class="primary-button" title="Run Code (Ctrl+Enter)">
+                        <button id="runButton" name="runButton" class="primary-button" title="Run Code (Ctrl+Enter)">
                             <i class="fas fa-play"></i> Run
                         </button>
-                        <button id="clearButton" title="Clear Editor">
+                        <button id="clearButton" name="clearButton" title="Clear Editor">
                             <i class="fas fa-eraser"></i> Clear
                         </button>
-                        <button id="formatButton" title="Format Code">
+                        <button id="formatButton" name="formatButton" title="Format Code">
                             <i class="fas fa-magic"></i> Format
                         </button>
-                        <button id="copyCode" title="Copy Code">
+                        <button id="copyCode" name="copyCode" title="Copy Code">
                             <i class="fas fa-copy"></i> Copy
                         </button>
                     </div>
 
                     <!-- Code Editor -->
                     <div class="editor-container">
-                        <textarea id="codeEditor">// JavaScript Security Lab
+                        <textarea id="codeEditor" name="codeEditor" autocomplete="off">// JavaScript Security Lab
 // Try out different code examples and explore security concepts!
 
 // Example 1: String Manipulation
@@ -126,13 +126,13 @@ const safeObject = Object.freeze({
                     <!-- Bottom Panel -->
                     <div class="bottom-panel">
                         <div class="panel-tabs">
-                            <div class="panel-tab active" data-panel="terminal">
+                            <div class="panel-tab active" data-panel="terminal" id="terminalTab" name="terminalTab">
                                 <i class="fas fa-terminal"></i> Terminal
                             </div>
-                            <div class="panel-tab" data-panel="output">
+                            <div class="panel-tab" data-panel="output" id="outputTab" name="outputTab">
                                 <i class="fas fa-stream"></i> Output
                             </div>
-                            <div class="panel-tab" data-panel="problems">
+                            <div class="panel-tab" data-panel="problems" id="problemsTab" name="problemsTab">
                                 <i class="fas fa-exclamation-triangle"></i> Problems
                             </div>
                         </div>
@@ -162,15 +162,15 @@ const safeObject = Object.freeze({
         <div class="status-bar">
             <div class="status-item">
                 <i class="fas fa-code"></i>
-                <span id="cursorPosition">Line: 1, Col: 1</span>
+                <span id="cursorPosition" name="cursorPosition">Line: 1, Col: 1</span>
             </div>
             <div class="status-item">
                 <i class="fas fa-file-alt"></i>
-                <span id="fileSize">Size: 0 bytes</span>
+                <span id="fileSize" name="fileSize">Size: 0 bytes</span>
             </div>
             <div class="status-item">
                 <i class="fas fa-clock"></i>
-                <span id="executionTime">Execution: 0ms</span>
+                <span id="executionTime" name="executionTime">Execution: 0ms</span>
             </div>
         </div>
     </div>
