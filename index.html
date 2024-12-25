@@ -188,6 +188,60 @@
             margin-top: 20px;
         }
 
+        .interactive-input {
+            background: var(--darker-bg);
+            border: 1px solid var(--primary-red);
+            color: var(--text-color);
+            padding: 8px;
+            margin: 5px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .input-group {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .input-group label {
+            min-width: 120px;
+        }
+
+        .result {
+            background: rgba(255, 0, 0, 0.1);
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 4px;
+            border-left: 3px solid var(--primary-red);
+        }
+
+        .type-badge {
+            display: inline-block;
+            padding: 2px 6px;
+            background: var(--primary-red);
+            color: white;
+            border-radius: 3px;
+            font-size: 0.8em;
+            margin-left: 5px;
+        }
+
+        .operation-select {
+            background: var(--darker-bg);
+            color: var(--text-color);
+            border: 1px solid var(--primary-red);
+            padding: 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .operation-select option {
+            background: var(--darker-bg);
+            color: var(--text-color);
+        }
+
         @media (max-width: 768px) {
             .container {
                 margin: 10px;
@@ -207,44 +261,73 @@
         <div class="section">
             <h2>Part 1: Data Type Analysis</h2>
             <div class="explanation">
-                Analyzing different data types in JavaScript:
-                • String (text data)
-                • Number (numeric data)
-                • Boolean (binary state)
+                Test different data types in JavaScript:
             </div>
-            <div id="dataTypes" class="output"></div>
+            <div class="input-group">
+                <label>String Test:</label>
+                <input type="text" id="stringInput" class="interactive-input" placeholder="Enter text" value="Hello">
+                <span class="type-badge">string</span>
+            </div>
+            <div class="input-group">
+                <label>Number Test:</label>
+                <input type="number" id="numberInput" class="interactive-input" placeholder="Enter number" value="42">
+                <span class="type-badge">number</span>
+            </div>
+            <div class="input-group">
+                <label>Boolean Test:</label>
+                <select id="booleanInput" class="interactive-input">
+                    <option value="true">true</option>
+                    <option value="false">false</option>
+                </select>
+                <span class="type-badge">boolean</span>
+            </div>
+            <div id="typeResults" class="result"></div>
         </div>
 
         <div class="section">
-            <h2>Part 2: Operation Handler</h2>
+            <h2>Part 2: Calculator Operations</h2>
             <div class="explanation">
-                Testing arithmetic operations:
-                • Addition (+)
-                • Subtraction (-)
-                • Multiplication (*)
-                • Division (/)
+                Try different arithmetic operations:
             </div>
-            <div id="calculator" class="output"></div>
+            <div class="input-group">
+                <label>First Number:</label>
+                <input type="number" id="calc1" class="interactive-input" value="10">
+            </div>
+            <div class="input-group">
+                <label>Operation:</label>
+                <select id="operation" class="operation-select">
+                    <option value="+">Addition (+)</option>
+                    <option value="-">Subtraction (-)</option>
+                    <option value="*">Multiplication (×)</option>
+                    <option value="/">Division (÷)</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Second Number:</label>
+                <input type="number" id="calc2" class="interactive-input" value="5">
+            </div>
+            <div id="calcResult" class="result"></div>
         </div>
 
         <div class="section">
             <h2>Part 3: Operator Testing</h2>
             <div class="explanation">
-                Security operator validation:
-                • Assignment operators (+=, *=)
-                • Comparison operators (===, >, !==)
-                • Logical operators (&&, ||)
+                Explore different operators:
             </div>
-            <div id="operators" class="output"></div>
-        </div>
-
-        <div class="tip">
-            [SYSTEM]: Access script.js for source code analysis
+            <div class="input-group">
+                <label>Test Value 1:</label>
+                <input type="number" id="compare1" class="interactive-input" value="10">
+            </div>
+            <div class="input-group">
+                <label>Test Value 2:</label>
+                <input type="number" id="compare2" class="interactive-input" value="5">
+            </div>
+            <div id="compareResults" class="result"></div>
         </div>
 
         <div class="controls">
-            <button onclick="runDemo()">Initialize Demo</button>
-            <button onclick="clearOutputs()">Clear Buffer</button>
+            <button onclick="updateAllResults()">Run Tests</button>
+            <button onclick="clearAllResults()">Clear Results</button>
         </div>
     </div>
     <script src="script.js"></script>
