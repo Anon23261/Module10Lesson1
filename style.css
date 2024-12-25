@@ -8,9 +8,8 @@
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     line-height: 1.6;
+    color: #e0e0e0;
     background-color: #1e1e1e;
-    color: #d4d4d4;
-    height: 100vh;
     overflow: hidden;
 }
 
@@ -22,28 +21,26 @@ body {
     width: 100%;
     height: 100%;
     z-index: -1;
-    opacity: 0.1;
+    opacity: 0.05;
 }
 
-/* Container */
+/* Container Layout */
 .container {
     display: flex;
     flex-direction: column;
     height: 100vh;
-    max-width: 100%;
-    margin: 0 auto;
-    padding: 1rem;
+    max-height: 100vh;
+    background-color: rgba(30, 30, 30, 0.97);
 }
 
-/* Header */
+/* Header Styles */
 header {
+    background-color: #252526;
+    padding: 10px 20px;
+    border-bottom: 1px solid #3c3c3c;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.5rem;
-    background-color: #252526;
-    border-radius: 5px;
-    margin-bottom: 1rem;
 }
 
 header h1 {
@@ -51,33 +48,35 @@ header h1 {
     color: #00ff00;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 10px;
 }
 
 .toolbar {
     display: flex;
-    gap: 0.5rem;
+    gap: 10px;
 }
 
 button {
-    padding: 0.5rem 1rem;
-    background-color: #333;
-    color: #fff;
-    border: none;
-    border-radius: 3px;
+    background-color: #2d2d2d;
+    color: #e0e0e0;
+    border: 1px solid #3c3c3c;
+    padding: 8px 15px;
+    border-radius: 4px;
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    transition: background-color 0.3s;
+    gap: 5px;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
 }
 
 button:hover {
-    background-color: #444;
+    background-color: #3c3c3c;
+    border-color: #525252;
 }
 
 button:active {
-    background-color: #555;
+    transform: translateY(1px);
 }
 
 button i {
@@ -87,25 +86,32 @@ button i {
 /* Main Content */
 main {
     display: flex;
-    gap: 1rem;
     flex: 1;
-    min-height: 0;
+    overflow: hidden;
 }
 
-/* Editor */
+/* Editor Container */
 .editor-container {
     flex: 1;
-    min-width: 0;
-    background-color: #1e1e1e;
-    border-radius: 5px;
     overflow: hidden;
+    background-color: #1e1e1e;
+    position: relative;
 }
 
 .CodeMirror {
     height: 100% !important;
-    font-family: 'Fira Code', monospace;
+    font-family: 'Consolas', 'Monaco', monospace;
     font-size: 14px;
     line-height: 1.5;
+}
+
+.CodeMirror-gutters {
+    border-right: 1px solid #3c3c3c;
+    background-color: #252526;
+}
+
+.CodeMirror-linenumber {
+    color: #6e7681;
 }
 
 /* Right Panel */
@@ -115,137 +121,118 @@ main {
     max-width: 600px;
     display: flex;
     flex-direction: column;
+    border-left: 1px solid #3c3c3c;
     background-color: #252526;
-    border-radius: 5px;
-    overflow: hidden;
 }
 
 .panel-nav {
     display: flex;
     background-color: #2d2d2d;
-    border-bottom: 1px solid #1e1e1e;
+    border-bottom: 1px solid #3c3c3c;
 }
 
 .panel-tab {
-    padding: 0.5rem 1rem;
     background: none;
     border: none;
-    color: #888;
+    padding: 8px 16px;
+    color: #e0e0e0;
     cursor: pointer;
+    border-right: 1px solid #3c3c3c;
 }
 
 .panel-tab:hover {
-    color: #fff;
-    background-color: #333;
+    background-color: #3c3c3c;
 }
 
 .panel-tab.active {
-    color: #00ff00;
-    background-color: #252526;
+    background-color: #1e1e1e;
     border-bottom: 2px solid #00ff00;
 }
 
 .panel-sections {
     flex: 1;
     overflow: hidden;
+    position: relative;
 }
 
 .panel-section {
     display: none;
     height: 100%;
-    padding: 1rem;
     overflow: auto;
+    padding: 10px;
 }
 
 .panel-section.active {
     display: block;
 }
 
-/* Terminal */
+/* Terminal Styles */
 #terminal {
-    background-color: #1a1a1a;
-    padding: 0.5rem;
+    background-color: #1e1e1e;
+    padding: 10px;
 }
 
-.terminal-error {
-    color: #ff0000;
-    padding: 1rem;
-    background-color: rgba(255, 0, 0, 0.1);
-    border-radius: 3px;
-    margin-top: 1rem;
+.xterm {
+    padding: 5px;
 }
 
 /* Problems Panel */
-#problems {
-    font-family: monospace;
+.problem-item {
+    padding: 8px;
+    margin-bottom: 5px;
+    background-color: #2d2d2d;
+    border-radius: 4px;
+    cursor: pointer;
 }
 
-.error {
-    color: #ff0000;
-    margin-bottom: 0.5rem;
+.problem-item:hover {
+    background-color: #3c3c3c;
 }
 
-.warning {
-    color: #ffff00;
-    margin-bottom: 0.5rem;
-}
-
-.success {
+.problem-line {
     color: #00ff00;
-    margin-bottom: 0.5rem;
+    margin-right: 10px;
 }
 
-.error-title {
-    font-weight: bold;
-    margin-bottom: 0.25rem;
-}
-
-.error-message {
-    margin-bottom: 0.25rem;
-}
-
-.error-stack {
-    color: #888;
-    font-size: 0.9em;
-    white-space: pre-wrap;
+.problem-message {
+    color: #ff6b6b;
 }
 
 /* Status Bar */
 .status-bar {
+    background-color: #007acc;
+    padding: 5px 10px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.5rem;
-    background-color: #252526;
     font-size: 0.9rem;
-    margin-top: 1rem;
-    border-radius: 5px;
+    color: #ffffff;
 }
 
 .status-left {
     display: flex;
-    gap: 1rem;
+    gap: 20px;
 }
 
 .status-right {
     display: flex;
-    gap: 0.5rem;
+    gap: 10px;
 }
 
 select {
-    background-color: #333;
-    color: #fff;
-    border: none;
-    padding: 0.25rem 0.5rem;
-    border-radius: 3px;
+    background-color: #2d2d2d;
+    color: #e0e0e0;
+    border: 1px solid #3c3c3c;
+    padding: 4px 8px;
+    border-radius: 4px;
     cursor: pointer;
 }
 
 select:hover {
-    background-color: #444;
+    background-color: #3c3c3c;
 }
 
-/* Scrollbars */
+/* Scrollbar Styles */
 ::-webkit-scrollbar {
     width: 10px;
     height: 10px;
@@ -256,16 +243,20 @@ select:hover {
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #444;
+    background: #3c3c3c;
     border-radius: 5px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #555;
+    background: #525252;
 }
 
-/* Responsiveness */
+/* Responsive Design */
 @media (max-width: 768px) {
+    .container {
+        height: auto;
+    }
+
     main {
         flex-direction: column;
     }
@@ -282,68 +273,20 @@ select:hover {
 
     .status-bar {
         flex-direction: column;
-        gap: 0.5rem;
-    }
-
-    .status-left,
-    .status-right {
-        width: 100%;
-        justify-content: space-between;
+        gap: 5px;
     }
 }
 
-/* CodeMirror Overrides */
-.cm-s-monokai.CodeMirror {
-    background-color: #1a1a1a !important;
-}
+/* Theme-specific Styles */
+.cm-s-monokai .cm-string { color: #e6db74; }
+.cm-s-monokai .cm-keyword { color: #f92672; }
+.cm-s-monokai .cm-variable { color: #a6e22e; }
+.cm-s-monokai .cm-def { color: #fd971f; }
+.cm-s-monokai .cm-comment { color: #75715e; }
 
-.CodeMirror-gutters {
-    border-right: 1px solid #333 !important;
-    background-color: #252526 !important;
-}
-
-.CodeMirror-linenumber {
-    color: #666 !important;
-}
-
-.CodeMirror-cursor {
-    border-left: 2px solid #00ff00 !important;
-}
-
-/* Additional Theme Support */
-.cm-s-dracula.CodeMirror { background: #282a36 !important; }
-.cm-s-material.CodeMirror { background: #263238 !important; }
-.cm-s-nord.CodeMirror { background: #2e3440 !important; }
-
-/* Form Styles */
-#codeForm {
-    height: 100%;
-}
-
-textarea#codeEditor {
-    width: 100%;
-    height: 100%;
-    border: none;
-    background: none;
-    color: inherit;
-    font-family: inherit;
-    font-size: inherit;
-    padding: 1rem;
-    resize: none;
-}
-
-textarea#codeEditor:focus {
-    outline: none;
-}
-
-/* Accessibility */
-.visually-hidden {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    border: 0;
-}
+/* Additional CodeMirror Customization */
+.CodeMirror-selected { background-color: rgba(255, 255, 255, 0.1) !important; }
+.CodeMirror-cursor { border-left: 2px solid #00ff00 !important; }
+.CodeMirror-activeline-background { background-color: rgba(255, 255, 255, 0.03) !important; }
+.CodeMirror-matchingbracket { color: #00ff00 !important; border-bottom: 1px solid #00ff00; }
+.CodeMirror-foldmarker { color: #00ff00; text-shadow: none; }

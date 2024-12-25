@@ -1,460 +1,229 @@
 // ==========================================
-// Global Configuration - DO NOT MODIFY
+// Global Variables
 // ==========================================
-const PERMANENT_COMMENTS = true; // Makes example comments non-deletable
-let DEFAULT_CODE = ''; // Will be set after editor initialization
-
-// Global variables
 let editor;
 let term;
 let currentTheme = 'monokai';
 let fontSize = 14;
+let DEFAULT_CODE = '';
 
 // ==========================================
-// Terminal Configuration
+// CodeMirror Configuration
 // ==========================================
-const terminalConfig = {
-    cursorBlink: true,
-    cursorStyle: 'block',
-    fontSize: 14,
-    fontFamily: 'monospace',
-    theme: {
-        background: '#1a1a1a',
-        foreground: '#00ff00',
-        cursor: '#00ff00',
-        selection: 'rgba(0, 255, 0, 0.3)',
-        black: '#000000',
-        red: '#ff0000',
-        green: '#33ff00',
-        yellow: '#ffff00',
-        blue: '#0066ff',
-        magenta: '#cc00ff',
-        cyan: '#00ffff',
-        white: '#d0d0d0',
-        brightBlack: '#808080',
-        brightRed: '#ff0000',
-        brightGreen: '#33ff00',
-        brightYellow: '#ffff00',
-        brightBlue: '#0066ff',
-        brightMagenta: '#cc00ff',
-        brightCyan: '#00ffff',
-        brightWhite: '#ffffff'
-    }
-};
-
-// ==========================================
-// Initialize CodeMirror and setup IDE
-// ==========================================
-document.addEventListener('DOMContentLoaded', function() {
-    initializeCodeEditor();
-    DEFAULT_CODE = editor?.getValue() || ''; // Stores initial example code
-    initializeTerminal();
-    setupEventListeners();
-    createMatrixRain();
-});
-
-// Initialize CodeMirror with advanced features
 function initializeCodeEditor() {
-    const codeEditor = document.getElementById('codeEditor');
-    if (!codeEditor) return;
-
-    editor = CodeMirror.fromTextArea(codeEditor, {
+    editor = CodeMirror.fromTextArea(document.getElementById('codeEditor'), {
         mode: 'javascript',
         theme: currentTheme,
         lineNumbers: true,
         autoCloseBrackets: true,
         matchBrackets: true,
+        foldGutter: true,
+        gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
+        extraKeys: {
+            'Ctrl-Space': 'autocomplete',
+            'Ctrl-/': 'toggleComment',
+            'Ctrl-Enter': runCode,
+            'Cmd-Enter': runCode
+        },
+        styleActiveLine: true,
         indentUnit: 4,
         tabSize: 4,
         lineWrapping: true,
-        foldGutter: true,
-        gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
-        styleActiveLine: true,
-        extraKeys: {
-            'Ctrl-Space': 'autocomplete',
-            'Ctrl-Q': cm => cm.foldCode(cm.getCursor()),
-            'Ctrl-Enter': runCode,
-            'Ctrl-S': saveCode,
-            'Ctrl-F': 'findPersistent',
-            'Alt-F': 'replace',
-            'Ctrl-/': 'toggleComment'
+        viewportMargin: Infinity
+    });
+
+    editor.setSize('100%', '100%');
+    editor.on('change', updateFileSize);
+    editor.on('cursorActivity', updateCursorPosition);
+
+    DEFAULT_CODE = editor.getValue();
+}
+
+// ==========================================
+// Terminal Configuration
+// ==========================================
+function initializeTerminal() {
+    const terminalElement = document.getElementById('terminal');
+    term = new Terminal({
+        cursorBlink: true,
+        fontSize: fontSize,
+        fontFamily: 'Consolas, monospace',
+        theme: {
+            background: '#1e1e1e',
+            foreground: '#ffffff'
         }
     });
 
-    // Preserve example code
-    if (PERMANENT_COMMENTS) {
-        editor.on('beforeChange', (cm, change) => {
-            const text = cm.getValue();
-            const commentLines = text.split('\n')
-                .map((line, i) => line.trim().startsWith('//') ? i : -1)
-                .filter(i => i !== -1);
+    const fitAddon = new FitAddon.FitAddon();
+    term.loadAddon(fitAddon);
+    term.loadAddon(new WebLinksAddon.WebLinksAddon());
+    term.loadAddon(new SearchAddon.SearchAddon());
 
-            if (change.from.line <= Math.max(...commentLines)) {
-                change.cancel();
-            }
-        });
-    }
-}
+    term.open(terminalElement);
+    fitAddon.fit();
 
-// Initialize Terminal with full functionality
-function initializeTerminal() {
-    const terminalContainer = document.getElementById('terminal');
-    if (!terminalContainer) return;
-
-    try {
-        // Create terminal instance
-        term = new Terminal(terminalConfig);
-        
-        // Add terminal addons
-        const fitAddon = new FitAddon.FitAddon();
-        const webLinksAddon = new WebLinksAddon.WebLinksAddon();
-        const searchAddon = new SearchAddon.SearchAddon();
-        
-        // Load addons
-        term.loadAddon(fitAddon);
-        term.loadAddon(webLinksAddon);
-        term.loadAddon(searchAddon);
-
-        // Open terminal
-        term.open(terminalContainer);
-        fitAddon.fit();
-
-        // Welcome message
-        term.writeln('\x1b[1;32m=== JavaScript Security Lab Terminal ===\x1b[0m');
-        term.writeln('\x1b[90mType "help" for available commands\x1b[0m');
-        term.write('\x1b[32m$ \x1b[0m');
-
-        // Terminal input handling
-        let currentLine = '';
-        term.onKey(({ key, domEvent }) => {
-            const printable = !domEvent.altKey && !domEvent.ctrlKey && !domEvent.metaKey;
-
-            if (domEvent.keyCode === 13) { // Enter
-                term.write('\r\n');
-                handleTerminalCommand(currentLine);
-                currentLine = '';
-                term.write('\x1b[32m$ \x1b[0m');
-            } else if (domEvent.keyCode === 8) { // Backspace
-                if (currentLine.length > 0) {
-                    currentLine = currentLine.slice(0, -1);
-                    term.write('\b \b');
-                }
-            } else if (printable) {
-                currentLine += key;
-                term.write(key);
-            }
-        });
-
-        // Handle terminal resize
-        window.addEventListener('resize', () => fitAddon.fit());
-    } catch (error) {
-        console.error('Terminal initialization error:', error);
-        const errorMsg = document.createElement('div');
-        errorMsg.className = 'terminal-error';
-        errorMsg.textContent = 'Terminal initialization failed. Please refresh the page.';
-        terminalContainer.appendChild(errorMsg);
-    }
-}
-
-// Handle terminal commands
-function handleTerminalCommand(command) {
-    const cmd = command.trim().toLowerCase();
+    term.writeln('JavaScript Security Lab Terminal');
+    term.writeln('Type "help" for available commands');
+    term.writeln('');
     
-    switch (cmd) {
-        case 'help':
-            term.writeln('\r\n\x1b[1;36mAvailable Commands:\x1b[0m');
-            term.writeln('  help     - Show this help message');
-            term.writeln('  clear    - Clear terminal');
-            term.writeln('  run      - Run current code');
-            term.writeln('  reset    - Reset editor to default code');
-            term.writeln('  theme    - Show current theme');
-            term.writeln('  version  - Show IDE version');
-            break;
-            
-        case 'clear':
-            term.clear();
-            break;
-            
-        case 'run':
-            term.writeln('\r\n\x1b[33mExecuting code...\x1b[0m');
-            runCode();
-            break;
-            
-        case 'reset':
-            editor.setValue(DEFAULT_CODE);
-            term.writeln('\r\n\x1b[32mEditor reset to default code\x1b[0m');
-            break;
-            
-        case 'theme':
-            term.writeln(`\r\n\x1b[32mCurrent theme: ${currentTheme}\x1b[0m`);
-            break;
-            
-        case 'version':
-            term.writeln('\r\n\x1b[32mJavaScript Security Lab v1.0.0\x1b[0m');
-            break;
-            
-        case '':
-            break;
-            
-        default:
-            term.writeln(`\r\n\x1b[31mCommand not found: ${command}\x1b[0m`);
-            term.writeln('\x1b[90mType "help" for available commands\x1b[0m');
-    }
+    term.onKey(({ key, domEvent }) => {
+        const printable = !domEvent.altKey && !domEvent.ctrlKey && !domEvent.metaKey;
+        if (domEvent.keyCode === 13) {
+            handleTerminalCommand();
+        } else if (printable) {
+            term.write(key);
+        }
+    });
+
+    window.addEventListener('resize', () => fitAddon.fit());
 }
 
-// Run code with proper error handling and output
+// ==========================================
+// Event Listeners
+// ==========================================
+function setupEventListeners() {
+    // Button Events
+    document.getElementById('runButton').addEventListener('click', runCode);
+    document.getElementById('clearButton').addEventListener('click', clearCode);
+    document.getElementById('formatButton').addEventListener('click', formatCode);
+    document.getElementById('copyCode').addEventListener('click', copyToClipboard);
+    document.getElementById('downloadCode').addEventListener('click', downloadCode);
+
+    // Theme and Font Size Events
+    document.getElementById('syntaxTheme').addEventListener('change', changeTheme);
+    document.getElementById('fontSize').addEventListener('change', changeFontSize);
+
+    // Panel Navigation
+    document.querySelectorAll('.panel-tab').forEach(tab => {
+        tab.addEventListener('click', () => switchPanel(tab.dataset.panel));
+    });
+}
+
+// ==========================================
+// Code Execution
+// ==========================================
 function runCode() {
-    if (!editor || !term) return;
-    
     const code = editor.getValue();
     const startTime = performance.now();
     
-    // Clear previous output
-    clearOutput();
-    
     try {
-        // Create a safe evaluation context
-        const consoleOutput = [];
-        const safeConsole = {
-            log: (...args) => {
-                const output = args.map(arg => 
-                    typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
-                ).join(' ');
-                consoleOutput.push(['log', output]);
-                term.writeln(`\r\n\x1b[37m${output}\x1b[0m`);
-            },
-            error: (...args) => {
-                const output = args.map(arg => String(arg)).join(' ');
-                consoleOutput.push(['error', output]);
-                term.writeln(`\r\n\x1b[31m${output}\x1b[0m`);
-            },
-            warn: (...args) => {
-                const output = args.map(arg => String(arg)).join(' ');
-                consoleOutput.push(['warn', output]);
-                term.writeln(`\r\n\x1b[33m${output}\x1b[0m`);
-            }
-        };
-
-        // Create evaluation context
-        const context = {
-            console: safeConsole,
-            setTimeout, 
-            clearTimeout,
-            setInterval,
-            clearInterval,
-            Date,
-            Math,
-            JSON,
-            String,
-            Number,
-            Boolean,
-            Array,
-            Object,
-            Error
-        };
-
-        // Run code in safe context
-        const result = new Function('context', `
-            with (context) {
-                ${code}
-            }
-        `)(context);
-
-        // Show execution time
-        const endTime = performance.now();
-        const executionTime = (endTime - startTime).toFixed(2);
-        term.writeln(`\r\n\x1b[32mCode executed successfully in ${executionTime}ms\x1b[0m`);
-        updateExecutionTime(executionTime);
-
-        // Update problems panel
-        document.getElementById('problems').innerHTML = '<div class="success">No errors found</div>';
+        // Clear previous problems
+        document.getElementById('problems').innerHTML = '';
         
-        // Run JSHint validation
-        if (window.JSHINT) {
-            JSHINT(code);
-            if (JSHINT.errors.length) {
-                const warnings = JSHINT.errors.map(err => 
-                    `<div class="warning">Line ${err.line}: ${err.reason}</div>`
-                ).join('');
-                document.getElementById('problems').innerHTML = warnings;
-            }
+        // Validate code with JSHint
+        JSHINT(code);
+        const errors = JSHINT.errors;
+        if (errors && errors.length > 0) {
+            displayProblems(errors);
         }
 
+        // Create a secure context for evaluation
+        const secureEval = new Function('console', `
+            const secureConsole = {
+                log: (...args) => console.log(...args),
+                error: (...args) => console.error(...args),
+                warn: (...args) => console.warn(...args),
+                info: (...args) => console.info(...args)
+            };
+            with (secureConsole) {
+                ${code}
+            }
+        `);
+
+        // Custom console for terminal output
+        const terminalConsole = {
+            log: (...args) => term.writeln(args.join(' ')),
+            error: (...args) => term.writeln('\x1b[31m' + args.join(' ') + '\x1b[0m'),
+            warn: (...args) => term.writeln('\x1b[33m' + args.join(' ') + '\x1b[0m'),
+            info: (...args) => term.writeln('\x1b[36m' + args.join(' ') + '\x1b[0m')
+        };
+
+        secureEval(terminalConsole);
     } catch (error) {
-        term.writeln(`\r\n\x1b[31mError: ${error.message}\x1b[0m`);
-        updateProblems(error);
-        console.error('Execution error:', error);
+        term.writeln('\x1b[31mError: ' + error.message + '\x1b[0m');
     }
+
+    const endTime = performance.now();
+    updateExecutionTime(endTime - startTime);
 }
 
-// Save code to localStorage
-function saveCode() {
-    if (!editor) return;
-    const code = editor.getValue();
-    localStorage.setItem('savedCode', code);
-    term.writeln('\r\n\x1b[32mCode saved successfully\x1b[0m');
-}
-
-// Clear terminal output
-function clearOutput() {
-    if (term) {
-        term.clear();
-        term.write('\x1b[32m$ \x1b[0m');
-    }
-}
-
-// Update the problems panel with error information
-function updateProblems(error) {
-    const problemsPanel = document.getElementById('problems');
-    if (!problemsPanel) return;
-
-    const errorHtml = `
-        <div class="error">
-            <div class="error-title">${error.name}</div>
-            <div class="error-message">${error.message}</div>
-            ${error.stack ? `<div class="error-stack">${error.stack}</div>` : ''}
-        </div>
-    `;
-    problemsPanel.innerHTML = errorHtml;
-}
-
-// Update execution time in status bar
-function updateExecutionTime(time) {
-    const executionTime = document.getElementById('executionTime');
-    if (executionTime) {
-        executionTime.textContent = `Execution: ${time}ms`;
-    }
-}
-
-// Update cursor position in status bar
+// ==========================================
+// UI Updates
+// ==========================================
 function updateCursorPosition() {
-    if (!editor) return;
     const pos = editor.getCursor();
-    const cursorPosition = document.getElementById('cursorPosition');
-    if (cursorPosition) {
-        cursorPosition.textContent = `Line: ${pos.line + 1}, Col: ${pos.ch + 1}`;
-    }
+    document.getElementById('cursorPosition').textContent = 
+        `Line: ${pos.line + 1}, Col: ${pos.ch + 1}`;
 }
 
-// Update file size in status bar
 function updateFileSize() {
-    if (!editor) return;
     const size = new Blob([editor.getValue()]).size;
-    const fileSize = document.getElementById('fileSize');
-    if (fileSize) {
-        fileSize.textContent = `Size: ${size} bytes`;
+    document.getElementById('fileSize').textContent = `Size: ${size} bytes`;
+}
+
+function updateExecutionTime(time) {
+    document.getElementById('executionTime').textContent = 
+        `Execution: ${Math.round(time)}ms`;
+}
+
+function displayProblems(errors) {
+    const problemsPanel = document.getElementById('problems');
+    problemsPanel.innerHTML = '';
+
+    errors.forEach(error => {
+        if (!error) return;
+        
+        const problemDiv = document.createElement('div');
+        problemDiv.className = 'problem-item';
+        problemDiv.innerHTML = `
+            <span class="problem-line">Line ${error.line}:</span>
+            <span class="problem-message">${error.reason}</span>
+        `;
+        
+        problemDiv.addEventListener('click', () => {
+            editor.setCursor(error.line - 1, error.character - 1);
+            editor.focus();
+        });
+
+        problemsPanel.appendChild(problemDiv);
+    });
+}
+
+// ==========================================
+// UI Actions
+// ==========================================
+function clearCode() {
+    if (confirm('Are you sure you want to clear the editor?')) {
+        editor.setValue('');
+        editor.focus();
     }
 }
 
-// Setup Event Listeners
-function setupEventListeners() {
-    // Button Event Listeners
-    const buttons = {
-        runButton: runCode,
-        clearButton: () => editor?.setValue(''),
-        formatButton: formatCode,
-        copyCode: copyToClipboard,
-        downloadCode: downloadCode
-    };
-
-    Object.entries(buttons).forEach(([id, handler]) => {
-        const button = document.getElementById(id);
-        if (button) button.addEventListener('click', handler);
-    });
-
-    // Tab Management
-    const tabs = document.querySelectorAll('.panel-tab');
-    tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            document.querySelectorAll('.panel-tab').forEach(t => {
-                t.classList.remove('active');
-                t.setAttribute('aria-selected', 'false');
-            });
-            document.querySelectorAll('.panel-section').forEach(s => s.classList.remove('active'));
-            
-            tab.classList.add('active');
-            tab.setAttribute('aria-selected', 'true');
-            const panel = tab.getAttribute('data-panel');
-            const panelElement = document.getElementById(panel);
-            if (panelElement) {
-                panelElement.classList.add('active');
-            }
-        });
-    });
-
-    // Theme Selector
-    const themeSelect = document.getElementById('syntaxTheme');
-    if (themeSelect) {
-        themeSelect.addEventListener('change', (e) => {
-            currentTheme = e.target.value;
-            if (editor) {
-                editor.setOption('theme', currentTheme);
-            }
-        });
-    }
-
-    // Font Size Selector
-    const fontSizeSelect = document.getElementById('fontSize');
-    if (fontSizeSelect) {
-        fontSizeSelect.addEventListener('change', (e) => {
-            fontSize = parseInt(e.target.value);
-            if (editor) {
-                editor.getWrapperElement().style.fontSize = `${fontSize}px`;
-            }
-            if (term) {
-                term.setOption('fontSize', fontSize);
-            }
-        });
-    }
-
-    // Editor Event Listeners
-    if (editor) {
-        editor.on('cursorActivity', updateCursorPosition);
-        editor.on('change', () => {
-            updateFileSize();
-            // Auto-save code
-            localStorage.setItem('savedCode', editor.getValue());
-        });
-    }
-}
-
-// Format code using Prettier
 function formatCode() {
-    if (!editor) return;
     try {
         const code = editor.getValue();
         const formatted = prettier.format(code, {
             parser: 'babel',
             plugins: prettierPlugins,
-            singleQuote: true,
-            trailingComma: 'es5',
-            bracketSpacing: true,
             semi: true,
-            tabWidth: 4
+            singleQuote: true
         });
         editor.setValue(formatted);
-        term.writeln('\r\n\x1b[32mCode formatted successfully\x1b[0m');
     } catch (error) {
-        term.writeln(`\r\n\x1b[31mFormatting error: ${error.message}\x1b[0m`);
-        updateProblems(error);
+        term.writeln('\x1b[31mFormat Error: ' + error.message + '\x1b[0m');
     }
 }
 
-// Copy code to clipboard
 function copyToClipboard() {
-    if (!editor) return;
     const code = editor.getValue();
     navigator.clipboard.writeText(code).then(() => {
-        term.writeln('\r\n\x1b[32mCode copied to clipboard\x1b[0m');
-    }).catch(error => {
-        term.writeln('\r\n\x1b[31mFailed to copy code\x1b[0m');
-        console.error('Copy error:', error);
+        term.writeln('\x1b[32mCode copied to clipboard!\x1b[0m');
+    }).catch(err => {
+        term.writeln('\x1b[31mFailed to copy: ' + err.message + '\x1b[0m');
     });
 }
 
-// Download code as file
 function downloadCode() {
-    if (!editor) return;
     const code = editor.getValue();
     const blob = new Blob([code], { type: 'text/javascript' });
     const url = URL.createObjectURL(blob);
@@ -465,61 +234,140 @@ function downloadCode() {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    term.writeln('\r\n\x1b[32mCode downloaded successfully\x1b[0m');
 }
 
-// Matrix Rain Effect
+function changeTheme(event) {
+    const theme = event.target.value;
+    editor.setOption('theme', theme);
+    currentTheme = theme;
+}
+
+function changeFontSize(event) {
+    const size = event.target.value;
+    fontSize = parseInt(size);
+    editor.getWrapperElement().style.fontSize = size + 'px';
+    term.setOption('fontSize', fontSize);
+}
+
+function switchPanel(panelId) {
+    document.querySelectorAll('.panel-section').forEach(panel => {
+        panel.classList.remove('active');
+    });
+    document.querySelectorAll('.panel-tab').forEach(tab => {
+        tab.classList.remove('active');
+        tab.setAttribute('aria-selected', 'false');
+    });
+    
+    document.getElementById(panelId).classList.add('active');
+    const activeTab = document.querySelector(`[data-panel="${panelId}"]`);
+    activeTab.classList.add('active');
+    activeTab.setAttribute('aria-selected', 'true');
+}
+
+// ==========================================
+// Terminal Commands
+// ==========================================
+function handleTerminalCommand() {
+    term.writeln('');
+    const command = term.buffer.active.getLine(term.buffer.active.baseY + term.buffer.active.cursorY).translateToString().trim();
+    
+    switch (command.toLowerCase()) {
+        case 'help':
+            term.writeln('Available commands:');
+            term.writeln('  help     - Show this help message');
+            term.writeln('  clear    - Clear the terminal');
+            term.writeln('  run      - Run the current code');
+            term.writeln('  reset    - Reset the editor to default code');
+            term.writeln('  theme    - Show current theme');
+            term.writeln('  version  - Show version information');
+            break;
+            
+        case 'clear':
+            term.clear();
+            break;
+            
+        case 'run':
+            term.writeln('Running code...');
+            runCode();
+            break;
+            
+        case 'reset':
+            editor.setValue(DEFAULT_CODE);
+            term.writeln('Editor reset to default code');
+            break;
+            
+        case 'theme':
+            term.writeln('Current theme: ' + currentTheme);
+            break;
+            
+        case 'version':
+            term.writeln('JavaScript Security Lab v1.0.0');
+            term.writeln('CodeMirror: ' + CodeMirror.version);
+            term.writeln('Terminal: ' + Terminal.version);
+            break;
+            
+        default:
+            if (command) {
+                term.writeln('Unknown command: ' + command);
+                term.writeln('Type "help" for available commands');
+            }
+    }
+    
+    term.write('\r\n$ ');
+}
+
+// ==========================================
+// Matrix Background Animation
+// ==========================================
 function createMatrixRain() {
     const canvas = document.getElementById('matrixBg');
-    if (!canvas) return;
-
-    canvas.style.position = 'fixed';
-    canvas.style.top = '0';
-    canvas.style.left = '0';
-    canvas.style.width = '100%';
-    canvas.style.height = '100%';
-    canvas.style.zIndex = '-1';
-    canvas.style.opacity = '0.1';
-
-    const ctx = canvas.getContext('2d', { 
-        willReadFrequently: true,
-        alpha: false,
-        desynchronized: true
-    });
-    if (!ctx) return;
-
-    let matrixChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%';
-    let drops = [];
-    let fontSize = 10;
-
-    function setupMatrix() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        drops = [];
-        const columns = canvas.width / fontSize;
-        for (let i = 0; i < columns; i++) {
-            drops[i] = 1;
-        }
-    }
-
-    function drawMatrix() {
-        if (!ctx) return;
+    const ctx = canvas.getContext('2d');
+    
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    const fontSize = 14;
+    const columns = canvas.width / fontSize;
+    const drops = new Array(Math.floor(columns)).fill(1);
+    
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#0F0';
+    ctx.font = fontSize + 'px monospace';
+    
+    function draw() {
         ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = '#0F0';
-        ctx.font = fontSize + 'px monospace';
-
+        
         for (let i = 0; i < drops.length; i++) {
-            const text = matrixChars[Math.floor(Math.random() * matrixChars.length)];
+            const text = chars[Math.floor(Math.random() * chars.length)];
+            ctx.fillStyle = '#0F0';
             ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+            
             if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
                 drops[i] = 0;
             }
             drops[i]++;
         }
     }
-
-    setupMatrix();
-    window.addEventListener('resize', setupMatrix);
-    setInterval(drawMatrix, 50);
+    
+    window.addEventListener('resize', () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    });
+    
+    setInterval(draw, 35);
 }
+
+// ==========================================
+// Initialize Everything
+// ==========================================
+document.addEventListener('DOMContentLoaded', function() {
+    initializeCodeEditor();
+    initializeTerminal();
+    setupEventListeners();
+    createMatrixRain();
+});
