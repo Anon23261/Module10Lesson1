@@ -17,25 +17,135 @@
             <div class="explanation">
                 Test different data types in JavaScript:
             </div>
-            <div class="input-group">
-                <label for="stringInput">String Test:</label>
-                <input type="text" id="stringInput" class="interactive-input" placeholder="Enter text" value="Hello" data-tooltip="Try typing special characters!">
-                <span class="type-badge">string</span>
+            
+            <!-- String Tests -->
+            <div class="subsection">
+                <h3>String Tests</h3>
+                <div class="input-group">
+                    <label for="stringInput">Basic String:</label>
+                    <input type="text" id="stringInput" class="interactive-input" placeholder="Enter text" value="Hello" data-tooltip="Try typing special characters!">
+                    <span class="type-badge">string</span>
+                </div>
+                <div class="input-group">
+                    <label for="stringConcatInput">String Concatenation:</label>
+                    <input type="text" id="stringConcatInput" class="interactive-input" placeholder="Will be concatenated" value="World" data-tooltip="See string concatenation in action!">
+                </div>
+                <div class="input-group">
+                    <label for="templateInput">Template Literal:</label>
+                    <input type="text" id="templateInput" class="interactive-input" placeholder="Used in template" value="Template" data-tooltip="See template literals in action!">
+                </div>
             </div>
-            <div class="input-group">
-                <label for="numberInput">Number Test:</label>
-                <input type="number" id="numberInput" class="interactive-input" placeholder="Enter number" value="42" data-tooltip="Try decimals and negative numbers!">
-                <span class="type-badge">number</span>
+
+            <!-- Number Tests -->
+            <div class="subsection">
+                <h3>Number Tests</h3>
+                <div class="input-group">
+                    <label for="integerInput">Integer:</label>
+                    <input type="number" id="integerInput" class="interactive-input" placeholder="Enter integer" value="42" data-tooltip="Try whole numbers">
+                </div>
+                <div class="input-group">
+                    <label for="floatInput">Float:</label>
+                    <input type="number" id="floatInput" class="interactive-input" step="0.1" placeholder="Enter decimal" value="3.14" data-tooltip="Try decimal numbers">
+                </div>
+                <div class="input-group">
+                    <label for="exponentialInput">Exponential:</label>
+                    <input type="number" id="exponentialInput" class="interactive-input" placeholder="Enter number" value="1000000" data-tooltip="Will be shown in exponential notation">
+                </div>
+                <div class="input-group">
+                    <label for="specialNumberInput">Special Number:</label>
+                    <select id="specialNumberInput" class="interactive-input" data-tooltip="Try special number values">
+                        <option value="Infinity">Infinity</option>
+                        <option value="-Infinity">-Infinity</option>
+                        <option value="NaN">NaN</option>
+                    </select>
+                </div>
             </div>
-            <div class="input-group">
-                <label for="booleanInput">Boolean Test:</label>
-                <select id="booleanInput" class="interactive-input" data-tooltip="Toggle between true and false">
-                    <option value="true">true</option>
-                    <option value="false">false</option>
-                </select>
-                <span class="type-badge">boolean</span>
+
+            <!-- Boolean Tests -->
+            <div class="subsection">
+                <h3>Boolean Tests</h3>
+                <div class="input-group">
+                    <label for="booleanInput">Direct Boolean:</label>
+                    <select id="booleanInput" class="interactive-input" data-tooltip="Toggle between true and false">
+                        <option value="true">true</option>
+                        <option value="false">false</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="booleanExpressionInput">Boolean Expression:</label>
+                    <input type="number" id="booleanExpressionInput" class="interactive-input" value="10" data-tooltip="Number will be evaluated as boolean">
+                </div>
             </div>
-            <div id="typeResults" class="result"></div>
+
+            <!-- Undefined & Null Tests -->
+            <div class="subsection">
+                <h3>Undefined & Null Tests</h3>
+                <div class="input-group">
+                    <label for="undefinedTest">Undefined Test:</label>
+                    <select id="undefinedTest" class="interactive-input" data-tooltip="Test undefined behavior">
+                        <option value="undefined">undefined</option>
+                        <option value="declared">declared variable</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="nullTest">Null Test:</label>
+                    <select id="nullTest" class="interactive-input" data-tooltip="Test null behavior">
+                        <option value="null">null</option>
+                        <option value="object">empty object</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Object Tests -->
+            <div class="subsection">
+                <h3>Object Tests</h3>
+                <div class="input-group">
+                    <label for="objectPropertyInput">Object Property:</label>
+                    <input type="text" id="objectPropertyInput" class="interactive-input" placeholder="Property name" value="name" data-tooltip="Enter a property name">
+                </div>
+                <div class="input-group">
+                    <label for="objectValueInput">Object Value:</label>
+                    <input type="text" id="objectValueInput" class="interactive-input" placeholder="Property value" value="John" data-tooltip="Enter a value for the property">
+                </div>
+            </div>
+
+            <!-- Array Tests -->
+            <div class="subsection">
+                <h3>Array Tests</h3>
+                <div class="input-group">
+                    <label for="arrayInput">Array Element:</label>
+                    <input type="text" id="arrayInput" class="interactive-input" placeholder="Add to array" value="item" data-tooltip="Add items to array">
+                </div>
+                <button onclick="addToArray()" class="mini-button" data-tooltip="Add element to array">Add</button>
+            </div>
+
+            <!-- Type Conversion Tests -->
+            <div class="subsection">
+                <h3>Type Conversion Tests</h3>
+                <div class="input-group">
+                    <label for="conversionInput">Value to Convert:</label>
+                    <input type="text" id="conversionInput" class="interactive-input" placeholder="Enter any value" value="123" data-tooltip="Try different values to convert">
+                </div>
+                <div class="input-group">
+                    <label for="conversionType">Convert To:</label>
+                    <select id="conversionType" class="interactive-input" data-tooltip="Select target type">
+                        <option value="string">String</option>
+                        <option value="number">Number</option>
+                        <option value="boolean">Boolean</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Results Display -->
+            <div id="typeResults" class="result">
+                <div class="result-section" id="stringResults"></div>
+                <div class="result-section" id="numberResults"></div>
+                <div class="result-section" id="booleanResults"></div>
+                <div class="result-section" id="undefinedNullResults"></div>
+                <div class="result-section" id="objectResults"></div>
+                <div class="result-section" id="arrayResults"></div>
+                <div class="result-section" id="conversionResults"></div>
+            </div>
         </div>
 
         <div class="section" data-tooltip="Try arithmetic operations">
