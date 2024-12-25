@@ -11,6 +11,7 @@
             --accent-color: #007acc;
             --text-color: #ffffff;
             --text-secondary: #b3b3b3;
+            --success-color: #4CAF50;
         }
         
         body {
@@ -60,18 +61,71 @@
             font-size: 1.1em;
         }
 
-        .console-hint {
+        .example-box {
             background-color: rgba(0, 122, 204, 0.1);
+            padding: 20px;
+            border-radius: 4px;
+            margin: 15px 0;
+        }
+
+        .input-group {
+            margin: 15px 0;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--text-secondary);
+        }
+
+        input, select {
+            background-color: var(--primary-color);
+            border: 1px solid var(--accent-color);
+            color: var(--text-color);
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 1em;
+            width: 200px;
+        }
+
+        button {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+            margin: 5px;
+        }
+
+        button:hover {
+            background-color: #005999;
+        }
+
+        .result {
+            background-color: var(--primary-color);
             padding: 15px;
             border-radius: 4px;
             margin-top: 15px;
+            border: 1px solid var(--accent-color);
         }
 
-        code {
-            background-color: rgba(255, 255, 255, 0.1);
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: 'Consolas', monospace;
+        .result-label {
+            color: var(--accent-color);
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .calculator {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .output {
+            color: var(--success-color);
         }
     </style>
 </head>
@@ -81,17 +135,69 @@
         
         <div class="section">
             <h2>Part 1: Understanding Data Types</h2>
-            <div class="instruction">Explore JavaScript's fundamental data types through interactive examples.</div>
-            <div class="console-hint">
-                Press <code>F12</code> or <code>Ctrl+Shift+J</code> to open the console and see the output
+            <div class="instruction">Explore different data types in JavaScript through this interactive example.</div>
+            
+            <div class="example-box">
+                <div class="input-group">
+                    <label for="studentName">Student Name (String):</label>
+                    <input type="text" id="studentName" value="Alice Johnson">
+                </div>
+                
+                <div class="input-group">
+                    <label for="studentAge">Student Age (Number):</label>
+                    <input type="number" id="studentAge" value="15">
+                </div>
+                
+                <div class="input-group">
+                    <label for="studentGrade">Grade Level (Number):</label>
+                    <input type="number" id="studentGrade" value="10">
+                </div>
+                
+                <div class="input-group">
+                    <label for="isPresent">Attendance Status (Boolean):</label>
+                    <select id="isPresent">
+                        <option value="true">Present</option>
+                        <option value="false">Absent</option>
+                    </select>
+                </div>
+
+                <button onclick="updateStudentInfo()">Update Student Information</button>
+                
+                <div class="result" id="studentResult">
+                    <div><span class="result-label">Name:</span> <span id="nameOutput"></span></div>
+                    <div><span class="result-label">Age:</span> <span id="ageOutput"></span></div>
+                    <div><span class="result-label">Grade:</span> <span id="gradeOutput"></span></div>
+                    <div><span class="result-label">Present:</span> <span id="presentOutput"></span></div>
+                </div>
             </div>
         </div>
 
         <div class="section">
             <h2>Part 2: Exploring JavaScript Operators</h2>
-            <div class="instruction">Learn about arithmetic, comparison, and logical operators with hands-on examples.</div>
-            <div class="console-hint">
-                Check the console to see the results of various operations
+            <div class="instruction">Try out different operators with these interactive calculators.</div>
+            
+            <div class="example-box">
+                <div class="calculator">
+                    <div class="input-group">
+                        <label for="num1">Number 1:</label>
+                        <input type="number" id="num1" value="20">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="num2">Number 2:</label>
+                        <input type="number" id="num2" value="5">
+                    </div>
+                </div>
+
+                <button onclick="calculateArithmetic()">Calculate Arithmetic Operations</button>
+                <button onclick="compareNumbers()">Compare Numbers</button>
+                <button onclick="checkLogical()">Check Logical Operations</button>
+                
+                <div class="result" id="operatorResults">
+                    <div id="arithmeticOutput"></div>
+                    <div id="comparisonOutput"></div>
+                    <div id="logicalOutput"></div>
+                </div>
             </div>
         </div>
     </div>
