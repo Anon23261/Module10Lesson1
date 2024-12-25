@@ -550,6 +550,15 @@ document.getElementById('shareCode').addEventListener('click', () => {
     });
 });
 
+document.getElementById('copyCode').addEventListener('click', () => {
+    const code = editor.getValue();
+    navigator.clipboard.writeText(code).then(() => {
+        output.info('Code copied to clipboard!');
+    }).catch(err => {
+        output.error('Failed to copy code: ' + err.message);
+    });
+});
+
 // Status bar updates
 editor.on('cursorActivity', () => {
     const pos = editor.getCursor();

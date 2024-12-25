@@ -1,33 +1,60 @@
-/* Base Styles */
+/* Hacker Theme Variables */
 :root {
-    --bg-primary: #1e1e1e;
-    --bg-secondary: #252526;
-    --bg-tertiary: #2d2d2d;
-    --text-primary: #d4d4d4;
-    --text-secondary: #858585;
-    --accent-primary: #0e639c;
-    --accent-hover: #1177bb;
-    --border-color: #404040;
-    --success-color: #4ec9b0;
-    --error-color: #f44747;
-    --warning-color: #cca700;
+    --bg-primary: #000000;
+    --bg-secondary: #0a0a0a;
+    --bg-tertiary: #1a1a1a;
+    --text-primary: #ffffff;
+    --text-secondary: #cccccc;
+    --accent-primary: #ff0000;
+    --accent-hover: #cc0000;
+    --border-color: #333333;
+    --success-color: #00ff00;
+    --error-color: #ff0000;
+    --warning-color: #ffff00;
+    --neon-glow: 0 0 10px var(--accent-primary);
 }
 
+/* Base Styles */
 body {
     margin: 0;
     padding: 0;
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-family: 'Fira Code', 'Consolas', monospace;
     background-color: var(--bg-primary);
     color: var(--text-primary);
     line-height: 1.6;
+    overflow: hidden;
+}
+
+/* Matrix Rain Effect */
+@keyframes matrix {
+    0% { background-position: 0% 0%; }
+    100% { background-position: 0% 100%; }
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    background: linear-gradient(0deg, 
+        rgba(255, 0, 0, 0.03) 25%,
+        transparent 25%
+    );
+    background-size: 100% 4px;
+    animation: matrix 20s linear infinite;
+    z-index: 0;
 }
 
 /* IDE Layout */
 .container {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
     height: 100vh;
-    overflow: hidden;
+    position: relative;
+    z-index: 1;
 }
 
 .ide-header {
@@ -36,13 +63,15 @@ body {
     align-items: center;
     padding: 10px 20px;
     background-color: var(--bg-secondary);
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--accent-primary);
+    box-shadow: 0 2px 10px rgba(255, 0, 0, 0.2);
 }
 
 .ide-header h1 {
     margin: 0;
     font-size: 1.5em;
-    color: var(--text-primary);
+    color: var(--accent-primary);
+    text-shadow: 0 0 5px var(--accent-primary);
 }
 
 .ide-controls {
@@ -51,29 +80,29 @@ body {
 }
 
 .ide-layout {
-    display: flex;
-    flex: 1;
+    display: grid;
+    grid-template-columns: 250px 1fr 300px;
     overflow: hidden;
 }
 
 /* Sidebar */
 .ide-sidebar {
-    width: 250px;
     background-color: var(--bg-secondary);
-    border-right: 1px solid var(--border-color);
+    border-right: 1px solid var(--accent-primary);
     display: flex;
     flex-direction: column;
 }
 
 .sidebar-section {
-    padding: 10px;
+    padding: 15px;
 }
 
 .sidebar-section h3 {
     margin: 0 0 10px 0;
-    color: var(--text-secondary);
+    color: var(--accent-primary);
     font-size: 0.9em;
     text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .example-list {
@@ -83,40 +112,43 @@ body {
 }
 
 .example-list li {
-    padding: 5px 10px;
+    padding: 8px 12px;
     cursor: pointer;
     border-radius: 3px;
+    color: var(--text-secondary);
+    transition: all 0.3s ease;
 }
 
 .example-list li:hover {
     background-color: var(--bg-tertiary);
+    color: var(--accent-primary);
+    text-shadow: 0 0 5px var(--accent-primary);
 }
 
 /* Main Editor */
 .ide-main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-rows: 1fr auto;
     background-color: var(--bg-primary);
 }
 
 .code-section {
-    flex: 1;
     display: flex;
     flex-direction: column;
+    border: 1px solid var(--border-color);
 }
 
 .code-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 5px 10px;
+    padding: 8px 15px;
     background-color: var(--bg-secondary);
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--accent-primary);
 }
 
 .file-name {
-    color: var(--text-secondary);
+    color: var(--accent-primary);
     font-size: 0.9em;
 }
 
@@ -126,7 +158,7 @@ body {
     color: var(--text-primary);
     border: none;
     padding: 10px;
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-family: 'Fira Code', monospace;
     font-size: 14px;
     resize: none;
 }
@@ -135,47 +167,49 @@ body {
 .output-section {
     height: 200px;
     background-color: var(--bg-secondary);
-    border-top: 1px solid var(--border-color);
+    border-top: 1px solid var(--accent-primary);
 }
 
 .output-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 5px 10px;
+    padding: 8px 15px;
     background-color: var(--bg-tertiary);
+    border-bottom: 1px solid var(--border-color);
 }
 
 .output-header h3 {
     margin: 0;
     font-size: 0.9em;
-    color: var(--text-secondary);
+    color: var(--accent-primary);
 }
 
 .output-content {
-    height: calc(100% - 30px);
+    height: calc(100% - 37px);
     overflow-y: auto;
     padding: 10px;
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-family: 'Fira Code', monospace;
     font-size: 13px;
+    background-color: var(--bg-primary);
 }
 
 /* Right Panel */
 .ide-panel {
-    width: 300px;
     background-color: var(--bg-secondary);
-    border-left: 1px solid var(--border-color);
+    border-left: 1px solid var(--accent-primary);
 }
 
 .panel-section {
-    padding: 10px;
+    padding: 15px;
 }
 
 .panel-section h3 {
     margin: 0 0 10px 0;
-    color: var(--text-secondary);
+    color: var(--accent-primary);
     font-size: 0.9em;
     text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 /* Console */
@@ -183,7 +217,7 @@ body {
     background-color: var(--bg-primary);
     color: var(--text-primary);
     padding: 10px;
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-family: 'Fira Code', monospace;
     font-size: 13px;
     height: 150px;
     overflow-y: auto;
@@ -195,10 +229,11 @@ body {
 .status-bar {
     display: flex;
     gap: 20px;
-    padding: 5px 10px;
+    padding: 5px 15px;
     background-color: var(--accent-primary);
-    color: white;
+    color: var(--text-primary);
     font-size: 12px;
+    border-top: 1px solid var(--border-color);
 }
 
 .status-item {
@@ -210,8 +245,8 @@ body {
 button {
     background-color: var(--bg-tertiary);
     color: var(--text-primary);
-    border: 1px solid var(--border-color);
-    padding: 5px 10px;
+    border: 1px solid var(--accent-primary);
+    padding: 6px 12px;
     border-radius: 3px;
     cursor: pointer;
     font-family: inherit;
@@ -219,10 +254,14 @@ button {
     display: flex;
     align-items: center;
     gap: 5px;
+    transition: all 0.3s ease;
+    text-shadow: 0 0 5px var(--accent-primary);
 }
 
 button:hover {
     background-color: var(--accent-primary);
+    box-shadow: var(--neon-glow);
+    transform: translateY(-1px);
 }
 
 .primary-button {
@@ -231,10 +270,11 @@ button:hover {
 
 .primary-button:hover {
     background-color: var(--accent-hover);
+    box-shadow: 0 0 15px var(--accent-primary);
 }
 
 .mini-button {
-    padding: 3px 8px;
+    padding: 4px 8px;
     font-size: 12px;
 }
 
@@ -242,37 +282,54 @@ button:hover {
 .theme-select {
     background-color: var(--bg-tertiary);
     color: var(--text-primary);
-    border: 1px solid var(--border-color);
-    padding: 3px 8px;
+    border: 1px solid var(--accent-primary);
+    padding: 4px 8px;
     border-radius: 3px;
     font-family: inherit;
     font-size: 13px;
+    cursor: pointer;
+}
+
+.theme-select:hover {
+    border-color: var(--accent-primary);
+    box-shadow: var(--neon-glow);
 }
 
 /* CodeMirror Customization */
 .CodeMirror {
     height: 100% !important;
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-family: 'Fira Code', monospace;
     font-size: 14px;
+    background-color: var(--bg-primary) !important;
+}
+
+.CodeMirror-gutters {
+    background-color: var(--bg-secondary) !important;
+    border-right: 1px solid var(--border-color) !important;
+}
+
+.CodeMirror-linenumber {
+    color: var(--text-secondary) !important;
 }
 
 /* Scrollbars */
 ::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
+    width: 8px;
+    height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-    background: var(--bg-primary);
+    background: var(--bg-secondary);
 }
 
 ::-webkit-scrollbar-thumb {
-    background: var(--bg-tertiary);
-    border-radius: 5px;
+    background: var(--accent-primary);
+    border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: var(--accent-primary);
+    background: var(--accent-hover);
+    box-shadow: var(--neon-glow);
 }
 
 /* Tooltips */
@@ -288,11 +345,13 @@ button:hover {
     transform: translateX(-50%);
     padding: 5px 10px;
     background-color: var(--bg-tertiary);
-    color: var(--text-primary);
+    color: var(--accent-primary);
+    border: 1px solid var(--accent-primary);
     border-radius: 3px;
     font-size: 12px;
     white-space: nowrap;
     z-index: 1000;
+    box-shadow: var(--neon-glow);
 }
 
 /* Inspector Content */
@@ -306,6 +365,21 @@ button:hover {
     overflow-y: auto;
 }
 
+.inspector-item {
+    padding: 5px;
+    border-bottom: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.inspector-item:hover {
+    background-color: var(--bg-tertiary);
+}
+
+.inspector-value {
+    color: var(--accent-primary);
+    margin-left: 10px;
+}
+
 /* Console Output Types */
 .console-log {
     color: var(--text-primary);
@@ -313,22 +387,68 @@ button:hover {
 
 .console-error {
     color: var(--error-color);
+    text-shadow: 0 0 5px var(--error-color);
 }
 
 .console-warn {
     color: var(--warning-color);
+    text-shadow: 0 0 5px var(--warning-color);
 }
 
 .console-info {
     color: var(--success-color);
+    text-shadow: 0 0 5px var(--success-color);
 }
 
-/* Animation */
+/* Animations */
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .fade-in {
     animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Glitch Effect */
+@keyframes glitch {
+    0% {
+        text-shadow: 0.05em 0 0 var(--accent-primary),
+                     -0.05em -0.025em 0 var(--success-color),
+                     -0.025em 0.025em 0 var(--warning-color);
+    }
+    14% {
+        text-shadow: 0.05em 0 0 var(--accent-primary),
+                     -0.05em -0.025em 0 var(--success-color),
+                     -0.025em 0.025em 0 var(--warning-color);
+    }
+    15% {
+        text-shadow: -0.05em -0.025em 0 var(--accent-primary),
+                     0.025em 0.025em 0 var(--success-color),
+                     -0.05em -0.05em 0 var(--warning-color);
+    }
+    49% {
+        text-shadow: -0.05em -0.025em 0 var(--accent-primary),
+                     0.025em 0.025em 0 var(--success-color),
+                     -0.05em -0.05em 0 var(--warning-color);
+    }
+    50% {
+        text-shadow: 0.025em 0.05em 0 var(--accent-primary),
+                     0.05em 0 0 var(--success-color),
+                     0 -0.05em 0 var(--warning-color);
+    }
+    99% {
+        text-shadow: 0.025em 0.05em 0 var(--accent-primary),
+                     0.05em 0 0 var(--success-color),
+                     0 -0.05em 0 var(--warning-color);
+    }
+    100% {
+        text-shadow: -0.025em 0 0 var(--accent-primary),
+                     -0.025em -0.025em 0 var(--success-color),
+                     -0.025em -0.05em 0 var(--warning-color);
+    }
+}
+
+.glitch {
+    animation: glitch 1s infinite;
 }

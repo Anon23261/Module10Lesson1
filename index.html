@@ -5,195 +5,109 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Permissions-Policy" content="interest-cohort=(), attribution-reporting=(), run-ad-auction=(), join-ad-interest-group=(), browsing-topics=(), compute-pressure=()">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔒</text></svg>">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/dracula.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/material.min.css">
     <link rel="stylesheet" href="style.css">
-    <title>JavaScript Security Lab</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prettier/2.8.1/standalone.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prettier/2.8.1/parser-babel.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/acorn/8.7.0/acorn.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/acorn-walk/8.7.0/walk.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/escodegen/2.0.0/escodegen.min.js"></script>
+    <title>JavaScript Security Lab - IDE</title>
 </head>
 <body>
     <div class="container">
-        <h1>JavaScript Security Lab</h1>
-        
-        <div class="section" data-tooltip="Explore JavaScript data types">
-            <h2>Part 1: Data Type Analysis</h2>
-            <div class="explanation">
-                Test different data types in JavaScript:
-            </div>
-            
-            <!-- String Tests -->
-            <div class="subsection">
-                <h3>String Tests</h3>
-                <div class="input-group">
-                    <label for="stringInput">Basic String:</label>
-                    <input type="text" id="stringInput" class="interactive-input" placeholder="Enter text" value="Hello" data-tooltip="Try typing special characters!">
-                    <span class="type-badge">string</span>
-                </div>
-                <div class="input-group">
-                    <label for="stringConcatInput">String Concatenation:</label>
-                    <input type="text" id="stringConcatInput" class="interactive-input" placeholder="Will be concatenated" value="World" data-tooltip="See string concatenation in action!">
-                </div>
-                <div class="input-group">
-                    <label for="templateInput">Template Literal:</label>
-                    <input type="text" id="templateInput" class="interactive-input" placeholder="Used in template" value="Template" data-tooltip="See template literals in action!">
-                </div>
-            </div>
-
-            <!-- Number Tests -->
-            <div class="subsection">
-                <h3>Number Tests</h3>
-                <div class="input-group">
-                    <label for="integerInput">Integer:</label>
-                    <input type="number" id="integerInput" class="interactive-input" placeholder="Enter integer" value="42" data-tooltip="Try whole numbers">
-                </div>
-                <div class="input-group">
-                    <label for="floatInput">Float:</label>
-                    <input type="number" id="floatInput" class="interactive-input" step="0.1" placeholder="Enter decimal" value="3.14" data-tooltip="Try decimal numbers">
-                </div>
-                <div class="input-group">
-                    <label for="exponentialInput">Exponential:</label>
-                    <input type="number" id="exponentialInput" class="interactive-input" placeholder="Enter number" value="1000000" data-tooltip="Will be shown in exponential notation">
-                </div>
-                <div class="input-group">
-                    <label for="specialNumberInput">Special Number:</label>
-                    <select id="specialNumberInput" class="interactive-input" data-tooltip="Try special number values">
-                        <option value="Infinity">Infinity</option>
-                        <option value="-Infinity">-Infinity</option>
-                        <option value="NaN">NaN</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- Boolean Tests -->
-            <div class="subsection">
-                <h3>Boolean Tests</h3>
-                <div class="input-group">
-                    <label for="booleanInput">Direct Boolean:</label>
-                    <select id="booleanInput" class="interactive-input" data-tooltip="Toggle between true and false">
-                        <option value="true">true</option>
-                        <option value="false">false</option>
-                    </select>
-                </div>
-                <div class="input-group">
-                    <label for="booleanExpressionInput">Boolean Expression:</label>
-                    <input type="number" id="booleanExpressionInput" class="interactive-input" value="10" data-tooltip="Number will be evaluated as boolean">
-                </div>
-            </div>
-
-            <!-- Undefined & Null Tests -->
-            <div class="subsection">
-                <h3>Undefined & Null Tests</h3>
-                <div class="input-group">
-                    <label for="undefinedTest">Undefined Test:</label>
-                    <select id="undefinedTest" class="interactive-input" data-tooltip="Test undefined behavior">
-                        <option value="undefined">undefined</option>
-                        <option value="declared">declared variable</option>
-                    </select>
-                </div>
-                <div class="input-group">
-                    <label for="nullTest">Null Test:</label>
-                    <select id="nullTest" class="interactive-input" data-tooltip="Test null behavior">
-                        <option value="null">null</option>
-                        <option value="object">empty object</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- Object Tests -->
-            <div class="subsection">
-                <h3>Object Tests</h3>
-                <div class="input-group">
-                    <label for="objectPropertyInput">Object Property:</label>
-                    <input type="text" id="objectPropertyInput" class="interactive-input" placeholder="Property name" value="name" data-tooltip="Enter a property name">
-                </div>
-                <div class="input-group">
-                    <label for="objectValueInput">Object Value:</label>
-                    <input type="text" id="objectValueInput" class="interactive-input" placeholder="Property value" value="John" data-tooltip="Enter a value for the property">
-                </div>
-            </div>
-
-            <!-- Array Tests -->
-            <div class="subsection">
-                <h3>Array Tests</h3>
-                <div class="input-group">
-                    <label for="arrayInput">Array Element:</label>
-                    <input type="text" id="arrayInput" class="interactive-input" placeholder="Add to array" value="item" data-tooltip="Add items to array">
-                </div>
-                <button onclick="addToArray()" class="mini-button" data-tooltip="Add element to array">Add</button>
-            </div>
-
-            <!-- Type Conversion Tests -->
-            <div class="subsection">
-                <h3>Type Conversion Tests</h3>
-                <div class="input-group">
-                    <label for="conversionInput">Value to Convert:</label>
-                    <input type="text" id="conversionInput" class="interactive-input" placeholder="Enter any value" value="123" data-tooltip="Try different values to convert">
-                </div>
-                <div class="input-group">
-                    <label for="conversionType">Convert To:</label>
-                    <select id="conversionType" class="interactive-input" data-tooltip="Select target type">
-                        <option value="string">String</option>
-                        <option value="number">Number</option>
-                        <option value="boolean">Boolean</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- Results Display -->
-            <div id="typeResults" class="result">
-                <div class="result-section" id="stringResults"></div>
-                <div class="result-section" id="numberResults"></div>
-                <div class="result-section" id="booleanResults"></div>
-                <div class="result-section" id="undefinedNullResults"></div>
-                <div class="result-section" id="objectResults"></div>
-                <div class="result-section" id="arrayResults"></div>
-                <div class="result-section" id="conversionResults"></div>
-            </div>
-        </div>
-
-        <div class="section" data-tooltip="Try arithmetic operations">
-            <h2>Part 2: Calculator Operations</h2>
-            <div class="explanation">
-                Try different arithmetic operations:
-            </div>
-            <div class="input-group">
-                <label for="calc1">First Number:</label>
-                <input type="number" id="calc1" class="interactive-input" value="10" data-tooltip="First operand">
-            </div>
-            <div class="input-group">
-                <label for="operation">Operation:</label>
-                <select id="operation" class="operation-select" data-tooltip="Choose your operation">
-                    <option value="+">Addition (+)</option>
-                    <option value="-">Subtraction (-)</option>
-                    <option value="*">Multiplication (×)</option>
-                    <option value="/">Division (÷)</option>
+        <div class="ide-header">
+            <h1 class="glitch">JavaScript Security Lab</h1>
+            <div class="ide-controls">
+                <button id="runCode" class="primary-button" data-tooltip="Run code (Ctrl + Enter)">▶ Run</button>
+                <button id="clearCode" data-tooltip="Clear editor and console">⌫ Clear</button>
+                <button id="formatCode" data-tooltip="Format code with Prettier">⚡ Format</button>
+                <button id="shareCode" data-tooltip="Generate shareable URL">↗ Share</button>
+                <select id="syntaxTheme" class="theme-select" data-tooltip="Change editor theme">
+                    <option value="monokai">Monokai</option>
+                    <option value="dracula">Dracula</option>
+                    <option value="material">Material</option>
                 </select>
             </div>
-            <div class="input-group">
-                <label for="calc2">Second Number:</label>
-                <input type="number" id="calc2" class="interactive-input" value="5" data-tooltip="Second operand">
-            </div>
-            <div id="calcResult" class="result"></div>
         </div>
 
-        <div class="section" data-tooltip="Test comparison operators">
-            <h2>Part 3: Operator Testing</h2>
-            <div class="explanation">
-                Explore different operators:
+        <div class="ide-layout">
+            <div class="ide-sidebar">
+                <div class="sidebar-section">
+                    <h3>Examples</h3>
+                    <ul class="example-list">
+                        <li data-example="string">String Operations</li>
+                        <li data-example="number">Number Operations</li>
+                        <li data-example="boolean">Boolean Logic</li>
+                        <li data-example="object">Object Manipulation</li>
+                        <li data-example="array">Array Methods</li>
+                    </ul>
+                </div>
+                <div class="sidebar-section">
+                    <h3>Console</h3>
+                    <div id="console-output" class="console"></div>
+                </div>
             </div>
-            <div class="input-group">
-                <label for="compare1">Test Value 1:</label>
-                <input type="number" id="compare1" class="interactive-input" value="10" data-tooltip="First value to compare">
+
+            <div class="ide-main">
+                <div class="code-section">
+                    <div class="code-header">
+                        <span class="file-name">script.js</span>
+                        <div class="code-controls">
+                            <button id="copyCode" class="mini-button" data-tooltip="Copy code to clipboard">📋 Copy</button>
+                        </div>
+                    </div>
+                    <textarea id="codeEditor" class="code-editor">// Write your JavaScript code here
+let example = "Hello, World!";
+console.log(typeof example);
+
+// Try different data types
+let number = 42;
+let boolean = true;
+let array = [1, 2, 3];
+let object = { key: "value" };
+
+// Test type conversions
+console.log(String(number));
+console.log(Number("42"));
+console.log(Boolean(1));</textarea>
+                </div>
+
+                <div class="output-section">
+                    <div class="output-header">
+                        <h3>Output</h3>
+                        <button id="clearOutput" class="mini-button">Clear Output</button>
+                    </div>
+                    <div id="output" class="output-content"></div>
+                </div>
             </div>
-            <div class="input-group">
-                <label for="compare2">Test Value 2:</label>
-                <input type="number" id="compare2" class="interactive-input" value="5" data-tooltip="Second value to compare">
+
+            <div class="ide-panel">
+                <div class="panel-section">
+                    <h3>Type Inspector</h3>
+                    <div id="typeInspector" class="inspector-content"></div>
+                </div>
+                <div class="panel-section">
+                    <h3>Variable Watch</h3>
+                    <div id="variableWatch" class="watch-content"></div>
+                </div>
             </div>
-            <div id="compareResults" class="result"></div>
         </div>
 
-        <div class="controls">
-            <button onclick="updateAllResults()" data-tooltip="Run all tests (Ctrl + Enter)">Run Tests</button>
-            <button onclick="clearAllResults()" data-tooltip="Clear all results (Ctrl + Delete)">Clear Results</button>
+        <div class="status-bar">
+            <div class="status-item" id="cursorPosition">Line: 1, Col: 1</div>
+            <div class="status-item" id="fileSize">Size: 0 bytes</div>
+            <div class="status-item" id="executionTime">Execution: 0ms</div>
         </div>
     </div>
+
     <script src="script.js"></script>
 </body>
 </html>
