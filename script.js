@@ -2,7 +2,7 @@
 // Global Configuration - DO NOT MODIFY
 // ==========================================
 const PERMANENT_COMMENTS = true; // Makes example comments non-deletable
-const DEFAULT_CODE = editor?.getValue() || ''; // Stores initial example code
+let DEFAULT_CODE = ''; // Will be set after editor initialization
 
 // Global variables
 let editor;
@@ -47,6 +47,7 @@ const terminalConfig = {
 // ==========================================
 document.addEventListener('DOMContentLoaded', function() {
     initializeCodeEditor();
+    DEFAULT_CODE = editor?.getValue() || ''; // Stores initial example code
     initializeTerminal();
     setupEventListeners();
     createMatrixRain();
