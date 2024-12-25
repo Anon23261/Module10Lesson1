@@ -156,7 +156,10 @@ function createMatrixRain() {
     canvas.style.opacity = '0.1';
     document.body.appendChild(canvas);
 
-    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    const ctx = canvas.getContext('2d', { 
+        willReadFrequently: true,
+        alpha: false 
+    });
     if (!ctx) return;
 
     let matrixChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%';
