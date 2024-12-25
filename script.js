@@ -146,7 +146,9 @@ function setupEventListeners() {
 
 // Matrix Rain Effect
 function createMatrixRain() {
-    const canvas = document.createElement('canvas');
+    const canvas = document.getElementById('matrixBg');
+    if (!canvas) return;
+
     canvas.style.position = 'fixed';
     canvas.style.top = '0';
     canvas.style.left = '0';
@@ -154,11 +156,11 @@ function createMatrixRain() {
     canvas.style.height = '100%';
     canvas.style.zIndex = '-1';
     canvas.style.opacity = '0.1';
-    document.body.appendChild(canvas);
 
     const ctx = canvas.getContext('2d', { 
         willReadFrequently: true,
-        alpha: false 
+        alpha: false,
+        desynchronized: true
     });
     if (!ctx) return;
 

@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <meta http-equiv="Permissions-Policy" content="interest-cohort=(), attribution-reporting=(), run-ad-auction=(), join-ad-interest-group=(), compute-pressure=(), browsing-topics=()">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' https: 'unsafe-inline' 'unsafe-eval'; style-src 'self' https: 'unsafe-inline';">
     <title>JavaScript Security Lab</title>
     
     <!-- Core Styles -->
@@ -23,7 +21,7 @@
 </head>
 <body>
     <div class="container">
-        <div class="matrix-bg"></div>
+        <canvas id="matrixBg" class="matrix-bg" width="100%" height="100%" data-will-read-frequently="true"></canvas>
         
         <!-- Menu Bar -->
         <nav class="menu-bar" role="navigation">
