@@ -25,80 +25,80 @@
         <div class="matrix-bg"></div>
         
         <!-- Menu Bar -->
-        <div class="menu-bar">
-            <div class="menu-item">
+        <nav class="menu-bar" role="navigation">
+            <div class="menu-item" id="fileMenu" role="menuitem">
                 <i class="fas fa-file"></i> File
-                <div class="menu-dropdown">
-                    <div class="menu-option" id="newFile" name="newFile"><i class="fas fa-plus"></i> New File</div>
-                    <div class="menu-option" id="openFile" name="openFile"><i class="fas fa-folder-open"></i> Open</div>
-                    <div class="menu-option" id="saveFile" name="saveFile"><i class="fas fa-save"></i> Save</div>
+                <div class="menu-dropdown" role="menu">
+                    <button class="menu-option" id="newFile" name="newFile" role="menuitem"><i class="fas fa-plus"></i> New File</button>
+                    <button class="menu-option" id="openFile" name="openFile" role="menuitem"><i class="fas fa-folder-open"></i> Open</button>
+                    <button class="menu-option" id="saveFile" name="saveFile" role="menuitem"><i class="fas fa-save"></i> Save</button>
                 </div>
             </div>
-            <div class="menu-item">
+            <div class="menu-item" id="editMenu" role="menuitem">
                 <i class="fas fa-edit"></i> Edit
-                <div class="menu-dropdown">
-                    <div class="menu-option" id="formatCode" name="formatCode"><i class="fas fa-magic"></i> Format Code</div>
-                    <div class="menu-option" id="findReplace" name="findReplace"><i class="fas fa-search"></i> Find/Replace</div>
+                <div class="menu-dropdown" role="menu">
+                    <button class="menu-option" id="formatCode" name="formatCode" role="menuitem"><i class="fas fa-magic"></i> Format Code</button>
+                    <button class="menu-option" id="findReplace" name="findReplace" role="menuitem"><i class="fas fa-search"></i> Find/Replace</button>
                 </div>
             </div>
-            <div class="menu-item">
+            <div class="menu-item" id="settingsMenu" role="menuitem">
                 <i class="fas fa-cog"></i> Settings
-                <div class="menu-dropdown">
+                <div class="menu-dropdown" role="menu">
                     <div class="menu-option">
                         <i class="fas fa-palette"></i> Theme
-                        <select id="syntaxTheme" name="syntaxTheme">
+                        <select id="syntaxTheme" name="syntaxTheme" role="combobox" aria-label="Select syntax theme">
                             <option value="monokai">Monokai</option>
                             <option value="dracula">Dracula</option>
                         </select>
                     </div>
                 </div>
             </div>
-        </div>
+        </nav>
 
         <!-- Main IDE Layout -->
         <div class="ide-layout">
             <!-- Left Sidebar -->
-            <div class="ide-sidebar">
+            <aside class="ide-sidebar" role="complementary">
                 <div class="sidebar-section">
                     <h3><i class="fas fa-folder"></i> Project Files</h3>
-                    <div class="file-tree">
-                        <div class="file-item active" id="projectFiles" name="projectFiles"><i class="fas fa-file-code"></i> index.html</div>
-                        <div class="file-item" id="scriptJs" name="scriptJs"><i class="fas fa-code"></i> script.js</div>
-                        <div class="file-item" id="styleCss" name="styleCss"><i class="fas fa-file-code"></i> style.css</div>
+                    <div class="file-tree" role="tree">
+                        <button class="file-item active" id="indexHtml" name="indexHtml" role="treeitem"><i class="fas fa-file-code"></i> index.html</button>
+                        <button class="file-item" id="scriptJs" name="scriptJs" role="treeitem"><i class="fas fa-code"></i> script.js</button>
+                        <button class="file-item" id="styleCss" name="styleCss" role="treeitem"><i class="fas fa-file-code"></i> style.css</button>
                     </div>
                 </div>
                 <div class="sidebar-section">
                     <h3><i class="fas fa-book"></i> Documentation</h3>
-                    <div class="doc-list">
-                        <div class="doc-item" id="javascriptBasics" name="javascriptBasics">JavaScript Basics</div>
-                        <div class="doc-item" id="securityBestPractices" name="securityBestPractices">Security Best Practices</div>
-                        <div class="doc-item" id="apiReference" name="apiReference">API Reference</div>
+                    <div class="doc-list" role="list">
+                        <button class="doc-item" id="jsBasics" name="jsBasics" role="listitem">JavaScript Basics</button>
+                        <button class="doc-item" id="securityPractices" name="securityPractices" role="listitem">Security Best Practices</button>
+                        <button class="doc-item" id="apiRef" name="apiRef" role="listitem">API Reference</button>
                     </div>
                 </div>
-            </div>
+            </aside>
 
             <!-- Main Editor Area -->
-            <div class="ide-main">
+            <main class="ide-main" role="main">
                 <div class="code-section">
                     <!-- Editor Controls -->
-                    <div class="editor-controls">
-                        <button id="runButton" name="runButton" class="primary-button" title="Run Code (Ctrl+Enter)">
-                            <i class="fas fa-play"></i> Run
+                    <div class="editor-controls" role="toolbar" aria-label="Editor controls">
+                        <button id="runButton" name="runButton" class="primary-button" title="Run Code (Ctrl+Enter)" aria-label="Run code">
+                            <i class="fas fa-play" aria-hidden="true"></i> Run
                         </button>
-                        <button id="clearButton" name="clearButton" title="Clear Editor">
-                            <i class="fas fa-eraser"></i> Clear
+                        <button id="clearButton" name="clearButton" title="Clear Editor" aria-label="Clear editor">
+                            <i class="fas fa-eraser" aria-hidden="true"></i> Clear
                         </button>
-                        <button id="formatButton" name="formatButton" title="Format Code">
-                            <i class="fas fa-magic"></i> Format
+                        <button id="formatButton" name="formatButton" title="Format Code" aria-label="Format code">
+                            <i class="fas fa-magic" aria-hidden="true"></i> Format
                         </button>
-                        <button id="copyCode" name="copyCode" title="Copy Code">
-                            <i class="fas fa-copy"></i> Copy
+                        <button id="copyCode" name="copyCode" title="Copy Code" aria-label="Copy code">
+                            <i class="fas fa-copy" aria-hidden="true"></i> Copy
                         </button>
                     </div>
 
                     <!-- Code Editor -->
-                    <div class="editor-container">
-                        <textarea id="codeEditor" name="codeEditor" autocomplete="off">// JavaScript Security Lab
+                    <div class="editor-container" role="application">
+                        <textarea id="codeEditor" name="codeEditor" autocomplete="off" spellcheck="false" aria-label="Code editor">// JavaScript Security Lab
 // Try out different code examples and explore security concepts!
 
 // Example 1: String Manipulation
@@ -124,55 +124,55 @@ const safeObject = Object.freeze({
                     </div>
 
                     <!-- Bottom Panel -->
-                    <div class="bottom-panel">
-                        <div class="panel-tabs">
-                            <div class="panel-tab active" data-panel="terminal" id="terminalTab" name="terminalTab">
-                                <i class="fas fa-terminal"></i> Terminal
-                            </div>
-                            <div class="panel-tab" data-panel="output" id="outputTab" name="outputTab">
-                                <i class="fas fa-stream"></i> Output
-                            </div>
-                            <div class="panel-tab" data-panel="problems" id="problemsTab" name="problemsTab">
-                                <i class="fas fa-exclamation-triangle"></i> Problems
-                            </div>
+                    <div class="bottom-panel" role="complementary">
+                        <div class="panel-tabs" role="tablist">
+                            <button class="panel-tab active" id="terminalTab" name="terminalTab" role="tab" aria-selected="true" aria-controls="terminal">
+                                <i class="fas fa-terminal" aria-hidden="true"></i> Terminal
+                            </button>
+                            <button class="panel-tab" id="outputTab" name="outputTab" role="tab" aria-selected="false" aria-controls="output">
+                                <i class="fas fa-stream" aria-hidden="true"></i> Output
+                            </button>
+                            <button class="panel-tab" id="problemsTab" name="problemsTab" role="tab" aria-selected="false" aria-controls="problems">
+                                <i class="fas fa-exclamation-triangle" aria-hidden="true"></i> Problems
+                            </button>
                         </div>
                         <div class="panel-content">
-                            <div id="terminal" class="panel-section active"></div>
-                            <div id="output" class="panel-section"></div>
-                            <div id="problems" class="panel-section"></div>
+                            <div id="terminal" class="panel-section active" role="tabpanel" aria-labelledby="terminalTab"></div>
+                            <div id="output" class="panel-section" role="tabpanel" aria-labelledby="outputTab"></div>
+                            <div id="problems" class="panel-section" role="tabpanel" aria-labelledby="problemsTab"></div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </main>
 
             <!-- Right Panel -->
-            <div class="ide-panel">
+            <aside class="ide-panel" role="complementary">
                 <div class="panel-section">
-                    <h3><i class="fas fa-info-circle"></i> Type Inspector</h3>
-                    <div id="typeInspector" class="inspector-content"></div>
+                    <h3><i class="fas fa-info-circle" aria-hidden="true"></i> Type Inspector</h3>
+                    <div id="typeInspector" class="inspector-content" role="region" aria-label="Type inspector"></div>
                 </div>
                 <div class="panel-section">
-                    <h3><i class="fas fa-eye"></i> Variable Watch</h3>
-                    <div id="variableWatch" class="watch-content"></div>
+                    <h3><i class="fas fa-eye" aria-hidden="true"></i> Variable Watch</h3>
+                    <div id="variableWatch" class="watch-content" role="region" aria-label="Variable watch"></div>
                 </div>
-            </div>
+            </aside>
         </div>
 
         <!-- Status Bar -->
-        <div class="status-bar">
+        <footer class="status-bar" role="status">
             <div class="status-item">
-                <i class="fas fa-code"></i>
+                <i class="fas fa-code" aria-hidden="true"></i>
                 <span id="cursorPosition" name="cursorPosition">Line: 1, Col: 1</span>
             </div>
             <div class="status-item">
-                <i class="fas fa-file-alt"></i>
+                <i class="fas fa-file-alt" aria-hidden="true"></i>
                 <span id="fileSize" name="fileSize">Size: 0 bytes</span>
             </div>
             <div class="status-item">
-                <i class="fas fa-clock"></i>
+                <i class="fas fa-clock" aria-hidden="true"></i>
                 <span id="executionTime" name="executionTime">Execution: 0ms</span>
             </div>
-        </div>
+        </footer>
     </div>
 
     <!-- CodeMirror Core -->
