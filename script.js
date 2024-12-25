@@ -295,24 +295,106 @@ function clearAllResults() {
 }
 
 // Event Listeners
-document.addEventListener('DOMContentLoaded', () => {
-    // Add input event listeners
-    const inputs = document.querySelectorAll('.interactive-input');
-    inputs.forEach(input => {
-        input.addEventListener('input', debounce(updateAllResults, 500));
-    });
-
-    // Add keyboard shortcuts
-    document.addEventListener('keydown', (e) => {
-        if (e.ctrlKey && e.key === 'Enter') {
-            updateAllResults();
-        } else if (e.ctrlKey && e.key === 'Delete') {
-            clearAllResults();
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize CodeMirror
+    const editor = CodeMirror.fromTextArea(document.getElementById('codeEditor'), {
+        mode: 'javascript',
+        theme: 'monokai',
+        lineNumbers: true,
+        autoCloseBrackets: true,
+        matchBrackets: true,
+        indentUnit: 4,
+        tabSize: 4,
+        lineWrapping: true,
+        foldGutter: true,
+        gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
+        extraKeys: {
+            'Ctrl-Space': 'autocomplete',
+            'Ctrl-Q': function(cm) {
+                cm.foldCode(cm.getCursor());
+            },
+            'Ctrl-Enter': function() {
+                runCode();
+            }
         }
     });
 
-    // Initial update
-    updateAllResults();
+    // Initialize Terminal
+    const term = new Terminal({
+        cursorBlink: true,
+        cursorStyle: 'block',
+        fontSize: 14,
+        fontFamily: 'monospace',
+        theme: {
+            background: '#1a1a1a',
+            foreground: '#00ff00'
+        }
+    });
+    
+    const terminalContainer = document.getElementById('terminal');
+    if (terminalContainer) {
+        term.open(terminalContainer);
+        const fitAddon = new FitAddon.FitAddon();
+        term.loadAddon(fitAddon);
+        fitAddon.fit();
+        term.write('JavaScript Security Lab Terminal\r\n$ ');
+    }
+
+    // Initialize event listeners only if elements exist
+    const runButton = document.getElementById('runButton');
+    if (runButton) {
+        runButton.addEventListener('click', runCode);
+    }
+
+    const clearButton = document.getElementById('clearButton');
+    if (clearButton) {
+        clearButton.addEventListener('click', () => {
+            editor.setValue('');
+            clear();
+        });
+    }
+
+    const formatButton = document.getElementById('formatButton');
+    if (formatButton) {
+        formatButton.addEventListener('click', () => {
+            const code = editor.getValue();
+            try {
+                const formatted = prettier.format(code, {
+                    parser: 'babel',
+                    plugins: prettierPlugins,
+                    singleQuote: true,
+                    semi: true,
+                    tabWidth: 4
+                });
+                editor.setValue(formatted);
+            } catch (err) {
+                error('Failed to format code: ' + err.message);
+            }
+        });
+    }
+
+    const copyButton = document.getElementById('copyCode');
+    if (copyButton) {
+        copyButton.addEventListener('click', () => {
+            const code = editor.getValue();
+            navigator.clipboard.writeText(code).then(() => {
+                success('Code copied to clipboard!');
+            }).catch(err => {
+                error('Failed to copy code: ' + err.message);
+            });
+        });
+    }
+
+    // Only call updateAllResults if the necessary elements exist
+    const requiredElements = [
+        'stringInput', 'stringConcatInput', 'templateInput',
+        'stringResults', 'numberResults', 'booleanResults'
+    ];
+    
+    const allElementsExist = requiredElements.every(id => document.getElementById(id));
+    if (allElementsExist) {
+        updateAllResults();
+    }
 });
 
 // Debounce function
@@ -328,28 +410,209 @@ function debounce(func, wait) {
     };
 }
 
-// Initialize CodeMirror
-const editor = CodeMirror.fromTextArea(document.getElementById('codeEditor'), {
-    mode: 'javascript',
-    theme: 'monokai',
-    lineNumbers: true,
-    autoCloseBrackets: true,
-    matchBrackets: true,
-    indentUnit: 4,
-    tabSize: 4,
-    lineWrapping: true,
-    foldGutter: true,
-    gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
-    extraKeys: {
-        'Ctrl-Space': 'autocomplete',
-        'Ctrl-/': 'toggleComment',
-        'Ctrl-Enter': function(cm) {
-            runCode();
-        }
+// Code Execution
+function runCode() {
+    const code = editor.getValue();
+    const startTime = performance.now();
+    
+    try {
+        // Create a secure context for code execution
+        const secureEval = new Function('output', `
+            with (Object.create(null)) {
+                try {
+                    ${code}
+                } catch (error) {
+                    output.error(error.message);
+                    throw error;
+                }
+            }
+        `);
+        
+        secureEval(output);
+        const endTime = performance.now();
+        output.success(`Code executed successfully in ${(endTime - startTime).toFixed(2)}ms`);
+        updateExecutionTime(endTime - startTime);
+        analyzeCode(code);
+    } catch (error) {
+        output.error(error.message);
+        updateProblems(error);
+    }
+}
+
+// Code Analysis
+function analyzeCode(code) {
+    try {
+        const ast = acorn.parse(code, { ecmaVersion: 2020 });
+        const variables = new Set();
+        const functions = new Set();
+        
+        acorn.walk.simple(ast, {
+            VariableDeclarator(node) {
+                if (node.id && node.id.name) {
+                    variables.add(node.id.name);
+                }
+            },
+            FunctionDeclaration(node) {
+                if (node.id && node.id.name) {
+                    functions.add(node.id.name);
+                }
+            }
+        });
+        
+        updateTypeInspector(Array.from(variables), Array.from(functions));
+    } catch (error) {
+        console.error('Analysis error:', error);
+    }
+}
+
+// UI Updates
+function updateTypeInspector(variables, functions) {
+    const inspector = document.getElementById('typeInspector');
+    if (!inspector) return;
+    
+    inspector.innerHTML = `
+        <div class="inspector-section">
+            <h4>Variables (${variables.length})</h4>
+            ${variables.map(v => `<div class="inspector-item">${v}</div>`).join('')}
+        </div>
+        <div class="inspector-section">
+            <h4>Functions (${functions.length})</h4>
+            ${functions.map(f => `<div class="inspector-item">${f}</div>`).join('')}
+        </div>
+    `;
+}
+
+function updateProblems(error) {
+    const problems = document.getElementById('problems');
+    if (!problems) return;
+    
+    problems.innerHTML += `
+        <div class="problem-item error">
+            <i class="fas fa-exclamation-circle"></i>
+            ${error.message}
+            <div class="problem-location">at line ${error.lineNumber || 'unknown'}</div>
+        </div>
+    `;
+}
+
+function updateExecutionTime(time) {
+    const timeElement = document.getElementById('executionTime');
+    if (!timeElement) return;
+    timeElement.textContent = `Execution: ${time.toFixed(2)}ms`;
+}
+
+// Event Listeners
+document.getElementById('runButton').addEventListener('click', runCode);
+
+document.getElementById('clearButton').addEventListener('click', () => {
+    editor.setValue('');
+    output.clear();
+});
+
+document.getElementById('formatButton').addEventListener('click', () => {
+    try {
+        const code = editor.getValue();
+        const formatted = prettier.format(code, {
+            parser: 'babel',
+            plugins: prettierPlugins,
+            singleQuote: true,
+            tabWidth: 4
+        });
+        editor.setValue(formatted);
+        output.info('Code formatted successfully');
+    } catch (error) {
+        output.error('Format error: ' + error.message);
     }
 });
 
-// Initialize output console
+// Copy button handler
+document.getElementById('copyCode').addEventListener('click', () => {
+    const code = editor.getValue();
+    navigator.clipboard.writeText(code).then(() => {
+        output.info('Code copied to clipboard!');
+    }).catch(err => {
+        output.error('Failed to copy code: ' + err.message);
+    });
+});
+
+// Status bar updates
+editor.on('cursorActivity', () => {
+    const pos = editor.getCursor();
+    document.getElementById('cursorPosition').textContent = 
+        `Line: ${pos.line + 1}, Col: ${pos.ch + 1}`;
+});
+
+editor.on('change', () => {
+    const size = new Blob([editor.getValue()]).size;
+    document.getElementById('fileSize').textContent = 
+        `Size: ${size} bytes`;
+});
+
+// Theme Selector
+document.getElementById('syntaxTheme').addEventListener('change', (e) => {
+    editor.setOption('theme', e.target.value);
+});
+
+// Tab Management
+document.querySelectorAll('.panel-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+        document.querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.panel-section').forEach(s => s.classList.remove('active'));
+        
+        tab.classList.add('active');
+        const panel = tab.getAttribute('data-panel');
+        document.getElementById(panel).classList.add('active');
+    });
+});
+
+// Matrix Rain Effect
+function createMatrixRain() {
+    const canvas = document.createElement('canvas');
+    canvas.className = 'matrix-rain';
+    document.body.appendChild(canvas);
+    
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    
+    const chars = '01'.split('');
+    const drops = [];
+    const fontSize = 14;
+    const columns = canvas.width / fontSize;
+    
+    for (let i = 0; i < columns; i++) {
+        drops[i] = 1;
+    }
+    
+    function draw() {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        ctx.fillStyle = '#ff0000';
+        ctx.font = fontSize + 'px monospace';
+        
+        for (let i = 0; i < drops.length; i++) {
+            const text = chars[Math.floor(Math.random() * chars.length)];
+            ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+            
+            if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                drops[i] = 0;
+            }
+            drops[i]++;
+        }
+    }
+    
+    setInterval(draw, 35);
+}
+
+// Initialize Matrix Rain
+createMatrixRain();
+
+// Initial setup
+editor.refresh();
+editor.focus();
+
+// Output Console
 const output = {
     log: function(message) {
         const outputDiv = document.getElementById('output');
@@ -490,99 +753,67 @@ function updateExecutionTime(time) {
 }
 
 // Event Listeners
-document.addEventListener('DOMContentLoaded', function() {
-    // Run Button
-    const runButton = document.getElementById('runButton');
-    if (runButton) {
-        runButton.addEventListener('click', runCode);
-    }
+document.getElementById('runButton').addEventListener('click', runCode);
 
-    // Clear Button
-    const clearButton = document.getElementById('clearButton');
-    if (clearButton) {
-        clearButton.addEventListener('click', () => {
-            editor.setValue('');
-            output.clear();
+document.getElementById('clearButton').addEventListener('click', () => {
+    editor.setValue('');
+    output.clear();
+});
+
+document.getElementById('formatButton').addEventListener('click', () => {
+    try {
+        const code = editor.getValue();
+        const formatted = prettier.format(code, {
+            parser: 'babel',
+            plugins: prettierPlugins,
+            singleQuote: true,
+            tabWidth: 4
         });
+        editor.setValue(formatted);
+        output.info('Code formatted successfully');
+    } catch (error) {
+        output.error('Format error: ' + error.message);
     }
+});
 
-    // Format Button
-    const formatButton = document.getElementById('formatButton');
-    if (formatButton) {
-        formatButton.addEventListener('click', () => {
-            try {
-                const code = editor.getValue();
-                const formatted = prettier.format(code, {
-                    parser: 'babel',
-                    plugins: prettierPlugins,
-                    singleQuote: true,
-                    tabWidth: 4
-                });
-                editor.setValue(formatted);
-                output.info('Code formatted successfully');
-            } catch (error) {
-                output.error('Format error: ' + error.message);
-            }
-        });
-    }
-
-    // Copy Button
-    const copyButton = document.getElementById('copyCode');
-    if (copyButton) {
-        copyButton.addEventListener('click', () => {
-            const code = editor.getValue();
-            navigator.clipboard.writeText(code).then(() => {
-                output.info('Code copied to clipboard!');
-            }).catch(err => {
-                output.error('Failed to copy code: ' + err.message);
-            });
-        });
-    }
-
-    // Theme Selector
-    const themeSelect = document.getElementById('syntaxTheme');
-    if (themeSelect) {
-        themeSelect.addEventListener('change', (e) => {
-            editor.setOption('theme', e.target.value);
-        });
-    }
-
-    // Status Bar Updates
-    editor.on('cursorActivity', () => {
-        const pos = editor.getCursor();
-        const cursorPosition = document.getElementById('cursorPosition');
-        if (cursorPosition) {
-            cursorPosition.textContent = `Line: ${pos.line + 1}, Col: ${pos.ch + 1}`;
-        }
+// Copy button handler
+document.getElementById('copyCode').addEventListener('click', () => {
+    const code = editor.getValue();
+    navigator.clipboard.writeText(code).then(() => {
+        output.info('Code copied to clipboard!');
+    }).catch(err => {
+        output.error('Failed to copy code: ' + err.message);
     });
+});
 
-    editor.on('change', () => {
-        const size = new Blob([editor.getValue()]).size;
-        const fileSize = document.getElementById('fileSize');
-        if (fileSize) {
-            fileSize.textContent = `Size: ${size} bytes`;
-        }
+// Status bar updates
+editor.on('cursorActivity', () => {
+    const pos = editor.getCursor();
+    document.getElementById('cursorPosition').textContent = 
+        `Line: ${pos.line + 1}, Col: ${pos.ch + 1}`;
+});
+
+editor.on('change', () => {
+    const size = new Blob([editor.getValue()]).size;
+    document.getElementById('fileSize').textContent = 
+        `Size: ${size} bytes`;
+});
+
+// Theme Selector
+document.getElementById('syntaxTheme').addEventListener('change', (e) => {
+    editor.setOption('theme', e.target.value);
+});
+
+// Tab Management
+document.querySelectorAll('.panel-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+        document.querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.panel-section').forEach(s => s.classList.remove('active'));
+        
+        tab.classList.add('active');
+        const panel = tab.getAttribute('data-panel');
+        document.getElementById(panel).classList.add('active');
     });
-
-    // Tab Management
-    const tabs = document.querySelectorAll('.panel-tab');
-    tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            document.querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.panel-section').forEach(s => s.classList.remove('active'));
-            
-            tab.classList.add('active');
-            const panel = tab.getAttribute('data-panel');
-            const panelElement = document.getElementById(panel);
-            if (panelElement) {
-                panelElement.classList.add('active');
-            }
-        });
-    });
-
-    // Initial setup
-    editor.refresh();
-    editor.focus();
 });
 
 // Initialize Terminal
